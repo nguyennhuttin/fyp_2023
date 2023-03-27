@@ -1,0 +1,72 @@
+diff --git a/train_1.ipynb b/train_1.ipynb
+index 4935767..53942ad 100644
+--- a/train_1.ipynb
++++ b/train_1.ipynb
+@@ -446,18 +446,6 @@
+     }
+    ],
+    "source": [
+-    "# #! \n",
+-    "batch_transforms_train = Compose([\n",
+-    "    ToGpu('cuda' if torch.cuda.is_available() else 'cpu'),\n",
+-    "    # NormalizedMelSpectrogram(\n",
+-    "    #     sample_rate=config.dataset.get(\n",
+-    "    #         'sample_rate', 16000),  # for LJspeech\n",
+-    "    #     n_mels=config.model.feat_in,\n",
+-    "    #     normalize=config.dataset.get('normalize', None)\n",
+-    "    # ).to('cuda' if torch.cuda.is_available() else 'cpu'),\n",
+-    "    AddLengths(),\n",
+-    "    Pad()\n",
+-    "])\n",
+     "\n",
+     "for epoch_idx in tqdm(range(config.train.get('epochs', 10))):\n",
+     "    # train:\n",
+@@ -468,7 +456,6 @@
+     "        batch = batch_transforms_train(batch)\n",
+     "        batch2=batch\n",
+     "        print(len(batch2['audio'][0]))\n",
+-    "        break\n",
+     "\n",
+     "        optimizer.zero_grad()\n",
+     "        logits = model(batch['audio'])\n",
+@@ -482,7 +469,7 @@
+     "        optimizer.step()\n",
+     "        lr_scheduler.step()\n",
+     "        # warmup_scheduler.dampen()\n",
+-    "\n",
++    "        break\n",
+     "        if batch_idx % config.wandb.get('log_interval', 5000) == 0:\n",
+     "            target_strings = decoder.convert_to_strings(batch['text'])\n",
+     "            decoded_output = decoder.decode(\n",
+diff --git a/wandb/run-20230322_124344-o15p5dpm/files/config.yaml b/wandb/run-20230322_124344-o15p5dpm/files/config.yaml
+index fc644ef..b3c8bf4 100644
+--- a/wandb/run-20230322_124344-o15p5dpm/files/config.yaml
++++ b/wandb/run-20230322_124344-o15p5dpm/files/config.yaml
+@@ -8,6 +8,7 @@ _wandb:
+     is_jupyter_run: true
+     is_kaggle_kernel: false
+     python_version: 3.9.15
++    session_history: code\_session_history.ipynb
+     start_time: 1679449429.631559
+     t:
+       1:
+@@ -24,6 +25,7 @@ _wandb:
+       - 55
+       3:
+       - 1
++      - 2
+       - 16
+       - 23
+       4: 3.9.15
+diff --git a/wandb/run-20230322_124344-o15p5dpm/files/wandb-summary.json b/wandb/run-20230322_124344-o15p5dpm/files/wandb-summary.json
+index 9e26dfe..44a4919 100644
+--- a/wandb/run-20230322_124344-o15p5dpm/files/wandb-summary.json
++++ b/wandb/run-20230322_124344-o15p5dpm/files/wandb-summary.json
+@@ -1 +1 @@
+-{}
+\ No newline at end of file
++{"_wandb": {"runtime": 81}}
+\ No newline at end of file
+diff --git a/wandb/run-20230322_124344-o15p5dpm/run-o15p5dpm.wandb b/wandb/run-20230322_124344-o15p5dpm/run-o15p5dpm.wandb
+index 7b76311..15adb1e 100644
+Binary files a/wandb/run-20230322_124344-o15p5dpm/run-o15p5dpm.wandb and b/wandb/run-20230322_124344-o15p5dpm/run-o15p5dpm.wandb differ

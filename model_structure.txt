@@ -1,0 +1,340 @@
+QuartzNet(
+  (encoder): Sequential(
+    (0): MainBlock(
+      (net): Sequential(
+        (0): Sequential(
+          (0): Conv1d(1, 1, kernel_size=(33,), stride=(2,), padding=(16,), bias=False)
+          (1): Conv1d(1, 256, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(256, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+      )
+      (out): Sequential(
+        (0): ReLU()
+        (1): Dropout(p=0.2, inplace=False)
+      )
+    )
+    (1): MainBlock(
+      (net): Sequential(
+        (0): Sequential(
+          (0): Conv1d(256, 256, kernel_size=(33,), stride=(1,), padding=(16,), groups=256, bias=False)
+          (1): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(256, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (2): Sequential(
+          (0): Conv1d(256, 256, kernel_size=(33,), stride=(1,), padding=(16,), groups=256, bias=False)
+          (1): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(256, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (3): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (4): Sequential(
+          (0): Conv1d(256, 256, kernel_size=(33,), stride=(1,), padding=(16,), groups=256, bias=False)
+          (1): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(256, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (5): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (6): Sequential(
+          (0): Conv1d(256, 256, kernel_size=(33,), stride=(1,), padding=(16,), groups=256, bias=False)
+          (1): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(256, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (7): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (8): Sequential(
+          (0): Conv1d(256, 256, kernel_size=(33,), stride=(1,), padding=(16,), groups=256, bias=False)
+          (1): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(256, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (9): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+      )
+      (residual_layer): Sequential(
+        (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(256, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+      )
+      (out): Sequential(
+        (0): ReLU()
+        (1): Dropout(p=0.2, inplace=False)
+      )
+    )
+    (2): MainBlock(
+      (net): Sequential(
+        (0): Sequential(
+          (0): Conv1d(256, 256, kernel_size=(39,), stride=(1,), padding=(19,), groups=256, bias=False)
+          (1): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(256, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (2): Sequential(
+          (0): Conv1d(256, 256, kernel_size=(39,), stride=(1,), padding=(19,), groups=256, bias=False)
+          (1): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(256, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (3): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (4): Sequential(
+          (0): Conv1d(256, 256, kernel_size=(39,), stride=(1,), padding=(19,), groups=256, bias=False)
+          (1): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(256, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (5): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (6): Sequential(
+          (0): Conv1d(256, 256, kernel_size=(39,), stride=(1,), padding=(19,), groups=256, bias=False)
+          (1): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(256, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (7): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (8): Sequential(
+          (0): Conv1d(256, 256, kernel_size=(39,), stride=(1,), padding=(19,), groups=256, bias=False)
+          (1): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(256, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (9): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+      )
+      (residual_layer): Sequential(
+        (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(256, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+      )
+      (out): Sequential(
+        (0): ReLU()
+        (1): Dropout(p=0.2, inplace=False)
+      )
+    )
+    (3): MainBlock(
+      (net): Sequential(
+        (0): Sequential(
+          (0): Conv1d(256, 256, kernel_size=(51,), stride=(1,), padding=(25,), groups=256, bias=False)
+          (1): Conv1d(256, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (2): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(51,), stride=(1,), padding=(25,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (3): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (4): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(51,), stride=(1,), padding=(25,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (5): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (6): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(51,), stride=(1,), padding=(25,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (7): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (8): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(51,), stride=(1,), padding=(25,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (9): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+      )
+      (residual_layer): Sequential(
+        (0): Conv1d(256, 512, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+      )
+      (out): Sequential(
+        (0): ReLU()
+        (1): Dropout(p=0.2, inplace=False)
+      )
+    )
+    (4): MainBlock(
+      (net): Sequential(
+        (0): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(63,), stride=(1,), padding=(31,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (2): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(63,), stride=(1,), padding=(31,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (3): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (4): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(63,), stride=(1,), padding=(31,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (5): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (6): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(63,), stride=(1,), padding=(31,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (7): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (8): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(63,), stride=(1,), padding=(31,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (9): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+      )
+      (residual_layer): Sequential(
+        (0): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+      )
+      (out): Sequential(
+        (0): ReLU()
+        (1): Dropout(p=0.2, inplace=False)
+      )
+    )
+    (5): MainBlock(
+      (net): Sequential(
+        (0): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(75,), stride=(1,), padding=(37,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (2): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(75,), stride=(1,), padding=(37,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (3): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (4): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(75,), stride=(1,), padding=(37,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (5): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (6): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(75,), stride=(1,), padding=(37,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (7): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+        (8): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(75,), stride=(1,), padding=(37,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (9): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+      )
+      (residual_layer): Sequential(
+        (0): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+      )
+      (out): Sequential(
+        (0): ReLU()
+        (1): Dropout(p=0.2, inplace=False)
+      )
+    )
+    (6): MainBlock(
+      (net): Sequential(
+        (0): Sequential(
+          (0): Conv1d(512, 512, kernel_size=(87,), stride=(1,), padding=(86,), dilation=(2,), groups=512, bias=False)
+          (1): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+          (2): BatchNorm1d(512, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+      )
+      (out): Sequential(
+        (0): ReLU()
+        (1): Dropout(p=0.2, inplace=False)
+      )
+    )
+    (7): MainBlock(
+      (net): Sequential(
+        (0): Sequential(
+          (0): Conv1d(512, 1024, kernel_size=(1,), stride=(1,), bias=False)
+          (1): BatchNorm1d(1024, eps=0.001, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): Sequential(
+          (0): ReLU()
+          (1): Dropout(p=0.2, inplace=False)
+        )
+      )
+      (out): Sequential(
+        (0): ReLU()
+        (1): Dropout(p=0.2, inplace=False)
+      )
+    )
+  )
+  (classify): Conv1d(1024, 258, kernel_size=(1,), stride=(1,))
+)

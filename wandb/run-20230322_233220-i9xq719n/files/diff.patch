@@ -1,0 +1,537 @@
+diff --git a/train_1.ipynb b/train_1.ipynb
+index 4935767..9f2d641 100644
+--- a/train_1.ipynb
++++ b/train_1.ipynb
+@@ -2,7 +2,7 @@
+  "cells": [
+   {
+    "cell_type": "code",
+-   "execution_count": 32,
++   "execution_count": 17,
+    "metadata": {},
+    "outputs": [],
+    "source": [
+@@ -72,7 +72,7 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 33,
++   "execution_count": 18,
+    "metadata": {},
+    "outputs": [
+     {
+@@ -93,7 +93,7 @@
+        " 'model': {'name': '_quartznet5x5_config', 'vocab_size': 120, 'feat_in': 64}}"
+       ]
+      },
+-     "execution_count": 33,
++     "execution_count": 18,
+      "metadata": {},
+      "output_type": "execute_result"
+     }
+@@ -104,207 +104,23 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 89,
++   "execution_count": 19,
+    "metadata": {},
+    "outputs": [
+     {
+-     "data": {
+-      "text/plain": [
+-       "22050"
+-      ]
+-     },
+-     "execution_count": 89,
+-     "metadata": {},
+-     "output_type": "execute_result"
+-    }
+-   ],
+-   "source": [
+-    "config.dataset.get('sample_rate', 16000)"
+-   ]
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 34,
+-   "metadata": {},
+-   "outputs": [
+-    {
+-     "name": "stdout",
+-     "output_type": "stream",
+-     "text": [
+-      "[{'filters': 256, 'repeat': 1, 'kernel': 33, 'stride': 2, 'dilation': 1, 'dropout': 0.2, 'residual': False, 'separable': True}, {'filters': 256, 'repeat': 5, 'kernel': 33, 'stride': 1, 'dilation': 1, 'dropout': 0.2, 'residual': True, 'separable': True}, {'filters': 256, 'repeat': 5, 'kernel': 39, 'stride': 1, 'dilation': 1, 'dropout': 0.2, 'residual': True, 'separable': True}, {'filters': 512, 'repeat': 5, 'kernel': 51, 'stride': 1, 'dilation': 1, 'dropout': 0.2, 'residual': True, 'separable': True}, {'filters': 512, 'repeat': 5, 'kernel': 63, 'stride': 1, 'dilation': 1, 'dropout': 0.2, 'residual': True, 'separable': True}, {'filters': 512, 'repeat': 5, 'kernel': 75, 'stride': 1, 'dilation': 1, 'dropout': 0.2, 'residual': True, 'separable': True}, {'filters': 512, 'repeat': 1, 'kernel': 87, 'stride': 1, 'dilation': 2, 'dropout': 0.2, 'residual': False, 'separable': True}, {'filters': 1024, 'repeat': 1, 'kernel': 1, 'stride': 1, 'dilation': 1, 'dropout': 0.2, 'residual': False, 'separable': False}]\n",
+-      "['<PAD>', '<UNK>', '<BOS>', '<EOS>', '▁', 'e', 't', 'a', 'o', 'n', 'i', 's', 'r', 'h', 'd', 'l', 'c', 'f', 'u', 'm', 'w', 'p', 'g', 'y', 'b', 'v', 'k', 'x', 'q', 'j', 'z', 'ü', '”', '“', 'é', '’', 'ê', 'è', 'â', 'à', '▁t', 'he', '▁a', '▁the', 'in', '▁o', '▁w', 're', '▁s', 'en', 'on', 'er', 'ed', '▁c', 'at', '▁b', '▁p', '▁f', '▁of', 'nd', '▁h', 'is', 'it', '▁m', 'or', '▁in', 'as', '▁to', 'al', 'ar', 'ou', 'es', '▁and', '▁d', '▁th', 'ing', 'an', '▁n', 'ic', 'ent', 'ion', '▁l', 'ro', '▁e', '▁was', '▁he', 'ot', '▁re', 'ly', 'le', '▁be', 'ad', 'id', '▁on', 'im', 've', 'st', 'om', 'll', '▁wh', '▁that', '▁g', 'ct', 'se', 'ut', 'et', '▁for', 'gh', 'ce', '▁as', '▁u', '▁st', 'ir', 'ld', 'ere', '▁his', 'ri', 'ur', 'qu', '▁at']\n"
++     "ename": "OutOfMemoryError",
++     "evalue": "CUDA out of memory. Tried to allocate 2.00 MiB (GPU 0; 4.00 GiB total capacity; 3.33 GiB already allocated; 0 bytes free; 3.47 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF",
++     "output_type": "error",
++     "traceback": [
++      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
++      "\u001b[1;31mOutOfMemoryError\u001b[0m                          Traceback (most recent call last)",
++      "\u001b[1;32m~\\AppData\\Local\\Temp\\ipykernel_23064\\1574529328.py\u001b[0m in \u001b[0;36m<module>\u001b[1;34m\u001b[0m\n\u001b[0;32m     29\u001b[0m batch_transforms_train = Compose([\n\u001b[0;32m     30\u001b[0m     \u001b[0mToGpu\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;34m'cuda'\u001b[0m \u001b[1;32mif\u001b[0m \u001b[0mtorch\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mcuda\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mis_available\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m \u001b[1;32melse\u001b[0m \u001b[1;34m'cpu'\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m---> 31\u001b[1;33m     NormalizedMelSpectrogram(\n\u001b[0m\u001b[0;32m     32\u001b[0m         \u001b[0msample_rate\u001b[0m\u001b[1;33m=\u001b[0m\u001b[0mconfig\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mdataset\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mget\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;34m'sample_rate'\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;36m16000\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m     33\u001b[0m         \u001b[0mn_mels\u001b[0m\u001b[1;33m=\u001b[0m\u001b[0mconfig\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mmodel\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mfeat_in\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;32mc:\\Users\\nntin\\anaconda3\\lib\\site-packages\\torch\\nn\\modules\\module.py\u001b[0m in \u001b[0;36mto\u001b[1;34m(self, *args, **kwargs)\u001b[0m\n\u001b[0;32m    987\u001b[0m             \u001b[1;32mreturn\u001b[0m \u001b[0mt\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mto\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mdevice\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mdtype\u001b[0m \u001b[1;32mif\u001b[0m \u001b[0mt\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mis_floating_point\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m \u001b[1;32mor\u001b[0m \u001b[0mt\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mis_complex\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m \u001b[1;32melse\u001b[0m \u001b[1;32mNone\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mnon_blocking\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    988\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m--> 989\u001b[1;33m         \u001b[1;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0m_apply\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mconvert\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m    990\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    991\u001b[0m     def register_backward_hook(\n",
++      "\u001b[1;32mc:\\Users\\nntin\\anaconda3\\lib\\site-packages\\torch\\nn\\modules\\module.py\u001b[0m in \u001b[0;36m_apply\u001b[1;34m(self, fn)\u001b[0m\n\u001b[0;32m    639\u001b[0m     \u001b[1;32mdef\u001b[0m \u001b[0m_apply\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mself\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mfn\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    640\u001b[0m         \u001b[1;32mfor\u001b[0m \u001b[0mmodule\u001b[0m \u001b[1;32min\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mchildren\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m--> 641\u001b[1;33m             \u001b[0mmodule\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0m_apply\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mfn\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m    642\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    643\u001b[0m         \u001b[1;32mdef\u001b[0m \u001b[0mcompute_should_use_set_data\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mtensor\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mtensor_applied\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;32mc:\\Users\\nntin\\anaconda3\\lib\\site-packages\\torch\\nn\\modules\\module.py\u001b[0m in \u001b[0;36m_apply\u001b[1;34m(self, fn)\u001b[0m\n\u001b[0;32m    686\u001b[0m         \u001b[1;32mfor\u001b[0m \u001b[0mkey\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mbuf\u001b[0m \u001b[1;32min\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0m_buffers\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mitems\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    687\u001b[0m             \u001b[1;32mif\u001b[0m \u001b[0mbuf\u001b[0m \u001b[1;32mis\u001b[0m \u001b[1;32mnot\u001b[0m \u001b[1;32mNone\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m--> 688\u001b[1;33m                 \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0m_buffers\u001b[0m\u001b[1;33m[\u001b[0m\u001b[0mkey\u001b[0m\u001b[1;33m]\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mfn\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mbuf\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m    689\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    690\u001b[0m         \u001b[1;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;32mc:\\Users\\nntin\\anaconda3\\lib\\site-packages\\torch\\nn\\modules\\module.py\u001b[0m in \u001b[0;36mconvert\u001b[1;34m(t)\u001b[0m\n\u001b[0;32m    985\u001b[0m                 return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None,\n\u001b[0;32m    986\u001b[0m                             non_blocking, memory_format=convert_to_format)\n\u001b[1;32m--> 987\u001b[1;33m             \u001b[1;32mreturn\u001b[0m \u001b[0mt\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mto\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mdevice\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mdtype\u001b[0m \u001b[1;32mif\u001b[0m \u001b[0mt\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mis_floating_point\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m \u001b[1;32mor\u001b[0m \u001b[0mt\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mis_complex\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m \u001b[1;32melse\u001b[0m \u001b[1;32mNone\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mnon_blocking\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m    988\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    989\u001b[0m         \u001b[1;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0m_apply\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mconvert\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;31mOutOfMemoryError\u001b[0m: CUDA out of memory. Tried to allocate 2.00 MiB (GPU 0; 4.00 GiB total capacity; 3.33 GiB already allocated; 0 bytes free; 3.47 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF"
+      ]
+-    },
+-    {
+-     "data": {
+-      "text/html": [
+-       "Finishing last run (ID:pqzr4zzb) before initializing another..."
+-      ],
+-      "text/plain": [
+-       "<IPython.core.display.HTML object>"
+-      ]
+-     },
+-     "metadata": {},
+-     "output_type": "display_data"
+-    },
+-    {
+-     "data": {
+-      "text/html": [
+-       "Waiting for W&B process to finish... <strong style=\"color:green\">(success).</strong>"
+-      ],
+-      "text/plain": [
+-       "<IPython.core.display.HTML object>"
+-      ]
+-     },
+-     "metadata": {},
+-     "output_type": "display_data"
+-    },
+-    {
+-     "data": {
+-      "application/vnd.jupyter.widget-view+json": {
+-       "model_id": "13cc2d4fd010482a8687ffd4606f97e0",
+-       "version_major": 2,
+-       "version_minor": 0
+-      },
+-      "text/plain": [
+-       "VBox(children=(Label(value='0.042 MB of 0.042 MB uploaded (0.000 MB deduped)\\r'), FloatProgress(value=1.0, max…"
+-      ]
+-     },
+-     "metadata": {},
+-     "output_type": "display_data"
+-    },
+-    {
+-     "data": {
+-      "text/html": [
+-       " View run <strong style=\"color:#cdcd00\">worldly-butterfly-24</strong> at: <a href='https://wandb.ai/monash-deep-neuron/quartznet_ljspeech/runs/pqzr4zzb' target=\"_blank\">https://wandb.ai/monash-deep-neuron/quartznet_ljspeech/runs/pqzr4zzb</a><br/>Synced 7 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)"
+-      ],
+-      "text/plain": [
+-       "<IPython.core.display.HTML object>"
+-      ]
+-     },
+-     "metadata": {},
+-     "output_type": "display_data"
+-    },
+-    {
+-     "data": {
+-      "text/html": [
+-       "Find logs at: <code>.\\wandb\\run-20230322_124221-pqzr4zzb\\logs</code>"
+-      ],
+-      "text/plain": [
+-       "<IPython.core.display.HTML object>"
+-      ]
+-     },
+-     "metadata": {},
+-     "output_type": "display_data"
+-    },
+-    {
+-     "data": {
+-      "text/html": [
+-       "Successfully finished last run (ID:pqzr4zzb). Initializing new run:<br/>"
+-      ],
+-      "text/plain": [
+-       "<IPython.core.display.HTML object>"
+-      ]
+-     },
+-     "metadata": {},
+-     "output_type": "display_data"
+-    },
+-    {
+-     "data": {
+-      "application/vnd.jupyter.widget-view+json": {
+-       "model_id": "324eb06540294ccdaaa2216854070864",
+-       "version_major": 2,
+-       "version_minor": 0
+-      },
+-      "text/plain": [
+-       "VBox(children=(Label(value='Waiting for wandb.init()...\\r'), FloatProgress(value=0.01693333333338766, max=1.0)…"
+-      ]
+-     },
+-     "metadata": {},
+-     "output_type": "display_data"
+-    },
+-    {
+-     "data": {
+-      "text/html": [
+-       "wandb version 0.14.0 is available!  To upgrade, please run:\n",
+-       " $ pip install wandb --upgrade"
+-      ],
+-      "text/plain": [
+-       "<IPython.core.display.HTML object>"
+-      ]
+-     },
+-     "metadata": {},
+-     "output_type": "display_data"
+-    },
+-    {
+-     "data": {
+-      "text/html": [
+-       "Tracking run with wandb version 0.13.10"
+-      ],
+-      "text/plain": [
+-       "<IPython.core.display.HTML object>"
+-      ]
+-     },
+-     "metadata": {},
+-     "output_type": "display_data"
+-    },
+-    {
+-     "data": {
+-      "text/html": [
+-       "Run data is saved locally in <code>c:\\Users\\nntin\\uni\\fyp\\quartznet-pytorch\\wandb\\run-20230322_124344-o15p5dpm</code>"
+-      ],
+-      "text/plain": [
+-       "<IPython.core.display.HTML object>"
+-      ]
+-     },
+-     "metadata": {},
+-     "output_type": "display_data"
+-    },
+-    {
+-     "data": {
+-      "text/html": [
+-       "Syncing run <strong><a href='https://wandb.ai/monash-deep-neuron/quartznet_ljspeech/runs/o15p5dpm' target=\"_blank\">treasured-star-25</a></strong> to <a href='https://wandb.ai/monash-deep-neuron/quartznet_ljspeech' target=\"_blank\">Weights & Biases</a> (<a href='https://wandb.me/run' target=\"_blank\">docs</a>)<br/>"
+-      ],
+-      "text/plain": [
+-       "<IPython.core.display.HTML object>"
+-      ]
+-     },
+-     "metadata": {},
+-     "output_type": "display_data"
+-    },
+-    {
+-     "data": {
+-      "text/html": [
+-       " View project at <a href='https://wandb.ai/monash-deep-neuron/quartznet_ljspeech' target=\"_blank\">https://wandb.ai/monash-deep-neuron/quartznet_ljspeech</a>"
+-      ],
+-      "text/plain": [
+-       "<IPython.core.display.HTML object>"
+-      ]
+-     },
+-     "metadata": {},
+-     "output_type": "display_data"
+-    },
+-    {
+-     "data": {
+-      "text/html": [
+-       " View run at <a href='https://wandb.ai/monash-deep-neuron/quartznet_ljspeech/runs/o15p5dpm' target=\"_blank\">https://wandb.ai/monash-deep-neuron/quartznet_ljspeech/runs/o15p5dpm</a>"
+-      ],
+-      "text/plain": [
+-       "<IPython.core.display.HTML object>"
+-      ]
+-     },
+-     "metadata": {},
+-     "output_type": "display_data"
+-    },
+-    {
+-     "data": {
+-      "text/plain": [
+-       "[]"
+-      ]
+-     },
+-     "execution_count": 34,
+-     "metadata": {},
+-     "output_type": "execute_result"
+     }
+    ],
+    "source": [
+@@ -419,14 +235,14 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 114,
++   "execution_count": null,
+    "metadata": {},
+    "outputs": [
+     {
+      "name": "stderr",
+      "output_type": "stream",
+      "text": [
+-      "  0%|          | 0/42 [00:02<?, ?it/s]"
++      "  0%|          | 0/42 [00:00<?, ?it/s]"
+      ]
+     },
+     {
+@@ -434,30 +250,40 @@
+      "output_type": "stream",
+      "text": [
+       "212893\n",
+-      "219293\n"
++      "64\n"
+      ]
+     },
+     {
+      "name": "stderr",
+      "output_type": "stream",
+      "text": [
+-      "\n"
++      "  0%|          | 0/42 [00:09<?, ?it/s]\n"
++     ]
++    },
++    {
++     "ename": "OutOfMemoryError",
++     "evalue": "CUDA out of memory. Tried to allocate 20.00 MiB (GPU 0; 4.00 GiB total capacity; 3.31 GiB already allocated; 0 bytes free; 3.46 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF",
++     "output_type": "error",
++     "traceback": [
++      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
++      "\u001b[1;31mOutOfMemoryError\u001b[0m                          Traceback (most recent call last)",
++      "\u001b[1;32m~\\AppData\\Local\\Temp\\ipykernel_23064\\938018780.py\u001b[0m in \u001b[0;36m<module>\u001b[1;34m\u001b[0m\n\u001b[0;32m     10\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m     11\u001b[0m         \u001b[0moptimizer\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mzero_grad\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m---> 12\u001b[1;33m         \u001b[0mlogits\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mmodel\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mbatch\u001b[0m\u001b[1;33m[\u001b[0m\u001b[1;34m'audio'\u001b[0m\u001b[1;33m]\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m     13\u001b[0m         output_length = torch.ceil(\n\u001b[0;32m     14\u001b[0m             batch['input_lengths'].float() / model.stride).int()\n",
++      "\u001b[1;32mc:\\Users\\nntin\\anaconda3\\lib\\site-packages\\torch\\nn\\modules\\module.py\u001b[0m in \u001b[0;36m_call_impl\u001b[1;34m(self, *input, **kwargs)\u001b[0m\n\u001b[0;32m   1210\u001b[0m             \u001b[0minput\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mbw_hook\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0msetup_input_hook\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0minput\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   1211\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m-> 1212\u001b[1;33m         \u001b[0mresult\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mforward_call\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m*\u001b[0m\u001b[0minput\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m   1213\u001b[0m         \u001b[1;32mif\u001b[0m \u001b[0m_global_forward_hooks\u001b[0m \u001b[1;32mor\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0m_forward_hooks\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   1214\u001b[0m             \u001b[1;32mfor\u001b[0m \u001b[0mhook\u001b[0m \u001b[1;32min\u001b[0m \u001b[1;33m(\u001b[0m\u001b[1;33m*\u001b[0m\u001b[0m_global_forward_hooks\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mvalues\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m*\u001b[0m\u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0m_forward_hooks\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mvalues\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;32mc:\\Users\\nntin\\uni\\fyp\\quartznet-pytorch\\model\\quartznet.py\u001b[0m in \u001b[0;36mforward\u001b[1;34m(self, audio_signal)\u001b[0m\n\u001b[0;32m     52\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m     53\u001b[0m     \u001b[1;32mdef\u001b[0m \u001b[0mforward\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mself\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0maudio_signal\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m---> 54\u001b[1;33m         \u001b[0mfeat\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mencoder\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0maudio_signal\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m     55\u001b[0m         \u001b[1;31m# BxCxT\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m     56\u001b[0m         \u001b[1;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mclassify\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mfeat\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;32mc:\\Users\\nntin\\anaconda3\\lib\\site-packages\\torch\\nn\\modules\\module.py\u001b[0m in \u001b[0;36m_call_impl\u001b[1;34m(self, *input, **kwargs)\u001b[0m\n\u001b[0;32m   1192\u001b[0m         if not (self._backward_hooks or self._forward_hooks or self._forward_pre_hooks or _global_backward_hooks\n\u001b[0;32m   1193\u001b[0m                 or _global_forward_hooks or _global_forward_pre_hooks):\n\u001b[1;32m-> 1194\u001b[1;33m             \u001b[1;32mreturn\u001b[0m \u001b[0mforward_call\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m*\u001b[0m\u001b[0minput\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m   1195\u001b[0m         \u001b[1;31m# Do not call functions when jit is used\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   1196\u001b[0m         \u001b[0mfull_backward_hooks\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mnon_full_backward_hooks\u001b[0m \u001b[1;33m=\u001b[0m \u001b[1;33m[\u001b[0m\u001b[1;33m]\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m[\u001b[0m\u001b[1;33m]\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;32mc:\\Users\\nntin\\anaconda3\\lib\\site-packages\\torch\\nn\\modules\\container.py\u001b[0m in \u001b[0;36mforward\u001b[1;34m(self, input)\u001b[0m\n\u001b[0;32m    202\u001b[0m     \u001b[1;32mdef\u001b[0m \u001b[0mforward\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mself\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0minput\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    203\u001b[0m         \u001b[1;32mfor\u001b[0m \u001b[0mmodule\u001b[0m \u001b[1;32min\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m--> 204\u001b[1;33m             \u001b[0minput\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mmodule\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0minput\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m    205\u001b[0m         \u001b[1;32mreturn\u001b[0m \u001b[0minput\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    206\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;32mc:\\Users\\nntin\\anaconda3\\lib\\site-packages\\torch\\nn\\modules\\module.py\u001b[0m in \u001b[0;36m_call_impl\u001b[1;34m(self, *input, **kwargs)\u001b[0m\n\u001b[0;32m   1192\u001b[0m         if not (self._backward_hooks or self._forward_hooks or self._forward_pre_hooks or _global_backward_hooks\n\u001b[0;32m   1193\u001b[0m                 or _global_forward_hooks or _global_forward_pre_hooks):\n\u001b[1;32m-> 1194\u001b[1;33m             \u001b[1;32mreturn\u001b[0m \u001b[0mforward_call\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m*\u001b[0m\u001b[0minput\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m   1195\u001b[0m         \u001b[1;31m# Do not call functions when jit is used\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   1196\u001b[0m         \u001b[0mfull_backward_hooks\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mnon_full_backward_hooks\u001b[0m \u001b[1;33m=\u001b[0m \u001b[1;33m[\u001b[0m\u001b[1;33m]\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m[\u001b[0m\u001b[1;33m]\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;32mc:\\Users\\nntin\\uni\\fyp\\quartznet-pytorch\\model\\layers.py\u001b[0m in \u001b[0;36mforward\u001b[1;34m(self, x)\u001b[0m\n\u001b[0;32m    121\u001b[0m             \u001b[0mresudial\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mresidual_layer\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mx\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    122\u001b[0m             \u001b[0mout\u001b[0m \u001b[1;33m+=\u001b[0m \u001b[0mresudial\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m--> 123\u001b[1;33m         \u001b[1;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mout\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mout\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m",
++      "\u001b[1;32mc:\\Users\\nntin\\anaconda3\\lib\\site-packages\\torch\\nn\\modules\\module.py\u001b[0m in \u001b[0;36m_call_impl\u001b[1;34m(self, *input, **kwargs)\u001b[0m\n\u001b[0;32m   1192\u001b[0m         if not (self._backward_hooks or self._forward_hooks or self._forward_pre_hooks or _global_backward_hooks\n\u001b[0;32m   1193\u001b[0m                 or _global_forward_hooks or _global_forward_pre_hooks):\n\u001b[1;32m-> 1194\u001b[1;33m             \u001b[1;32mreturn\u001b[0m \u001b[0mforward_call\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m*\u001b[0m\u001b[0minput\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m   1195\u001b[0m         \u001b[1;31m# Do not call functions when jit is used\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   1196\u001b[0m         \u001b[0mfull_backward_hooks\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mnon_full_backward_hooks\u001b[0m \u001b[1;33m=\u001b[0m \u001b[1;33m[\u001b[0m\u001b[1;33m]\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m[\u001b[0m\u001b[1;33m]\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;32mc:\\Users\\nntin\\anaconda3\\lib\\site-packages\\torch\\nn\\modules\\container.py\u001b[0m in \u001b[0;36mforward\u001b[1;34m(self, input)\u001b[0m\n\u001b[0;32m    202\u001b[0m     \u001b[1;32mdef\u001b[0m \u001b[0mforward\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mself\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0minput\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    203\u001b[0m         \u001b[1;32mfor\u001b[0m \u001b[0mmodule\u001b[0m \u001b[1;32min\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m--> 204\u001b[1;33m             \u001b[0minput\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mmodule\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0minput\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m    205\u001b[0m         \u001b[1;32mreturn\u001b[0m \u001b[0minput\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m    206\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;32mc:\\Users\\nntin\\anaconda3\\lib\\site-packages\\torch\\nn\\modules\\module.py\u001b[0m in \u001b[0;36m_call_impl\u001b[1;34m(self, *input, **kwargs)\u001b[0m\n\u001b[0;32m   1192\u001b[0m         if not (self._backward_hooks or self._forward_hooks or self._forward_pre_hooks or _global_backward_hooks\n\u001b[0;32m   1193\u001b[0m                 or _global_forward_hooks or _global_forward_pre_hooks):\n\u001b[1;32m-> 1194\u001b[1;33m             \u001b[1;32mreturn\u001b[0m \u001b[0mforward_call\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m*\u001b[0m\u001b[0minput\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m   1195\u001b[0m         \u001b[1;31m# Do not call functions when jit is used\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   1196\u001b[0m         \u001b[0mfull_backward_hooks\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mnon_full_backward_hooks\u001b[0m \u001b[1;33m=\u001b[0m \u001b[1;33m[\u001b[0m\u001b[1;33m]\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;33m[\u001b[0m\u001b[1;33m]\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;32mc:\\Users\\nntin\\anaconda3\\lib\\site-packages\\torch\\nn\\modules\\dropout.py\u001b[0m in \u001b[0;36mforward\u001b[1;34m(self, input)\u001b[0m\n\u001b[0;32m     57\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m     58\u001b[0m     \u001b[1;32mdef\u001b[0m \u001b[0mforward\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mself\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0minput\u001b[0m\u001b[1;33m:\u001b[0m \u001b[0mTensor\u001b[0m\u001b[1;33m)\u001b[0m \u001b[1;33m->\u001b[0m \u001b[0mTensor\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m---> 59\u001b[1;33m         \u001b[1;32mreturn\u001b[0m \u001b[0mF\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mdropout\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0minput\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mp\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mtraining\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mself\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0minplace\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m     60\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m     61\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;32mc:\\Users\\nntin\\anaconda3\\lib\\site-packages\\torch\\nn\\functional.py\u001b[0m in \u001b[0;36mdropout\u001b[1;34m(input, p, training, inplace)\u001b[0m\n\u001b[0;32m   1250\u001b[0m     \u001b[1;32mif\u001b[0m \u001b[0mp\u001b[0m \u001b[1;33m<\u001b[0m \u001b[1;36m0.0\u001b[0m \u001b[1;32mor\u001b[0m \u001b[0mp\u001b[0m \u001b[1;33m>\u001b[0m \u001b[1;36m1.0\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   1251\u001b[0m         \u001b[1;32mraise\u001b[0m \u001b[0mValueError\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;34m\"dropout probability has to be between 0 and 1, \"\u001b[0m \u001b[1;34m\"but got {}\"\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mformat\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mp\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m-> 1252\u001b[1;33m     \u001b[1;32mreturn\u001b[0m \u001b[0m_VF\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mdropout_\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0minput\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mp\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mtraining\u001b[0m\u001b[1;33m)\u001b[0m \u001b[1;32mif\u001b[0m \u001b[0minplace\u001b[0m \u001b[1;32melse\u001b[0m \u001b[0m_VF\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mdropout\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0minput\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mp\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mtraining\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m   1253\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m   1254\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n",
++      "\u001b[1;31mOutOfMemoryError\u001b[0m: CUDA out of memory. Tried to allocate 20.00 MiB (GPU 0; 4.00 GiB total capacity; 3.31 GiB already allocated; 0 bytes free; 3.46 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF"
+      ]
+     }
+    ],
+    "source": [
+-    "# #! \n",
+-    "batch_transforms_train = Compose([\n",
+-    "    ToGpu('cuda' if torch.cuda.is_available() else 'cpu'),\n",
+-    "    # NormalizedMelSpectrogram(\n",
+-    "    #     sample_rate=config.dataset.get(\n",
+-    "    #         'sample_rate', 16000),  # for LJspeech\n",
+-    "    #     n_mels=config.model.feat_in,\n",
+-    "    #     normalize=config.dataset.get('normalize', None)\n",
+-    "    # ).to('cuda' if torch.cuda.is_available() else 'cpu'),\n",
+-    "    AddLengths(),\n",
+-    "    Pad()\n",
+-    "])\n",
+     "\n",
+     "for epoch_idx in tqdm(range(config.train.get('epochs', 10))):\n",
+     "    # train:\n",
+@@ -468,7 +294,6 @@
+     "        batch = batch_transforms_train(batch)\n",
+     "        batch2=batch\n",
+     "        print(len(batch2['audio'][0]))\n",
+-    "        break\n",
+     "\n",
+     "        optimizer.zero_grad()\n",
+     "        logits = model(batch['audio'])\n",
+@@ -482,7 +307,7 @@
+     "        optimizer.step()\n",
+     "        lr_scheduler.step()\n",
+     "        # warmup_scheduler.dampen()\n",
+-    "\n",
++    "        break\n",
+     "        if batch_idx % config.wandb.get('log_interval', 5000) == 0:\n",
+     "            target_strings = decoder.convert_to_strings(batch['text'])\n",
+     "            decoded_output = decoder.decode(\n",
+@@ -549,82 +374,36 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 38,
++   "execution_count": null,
+    "metadata": {},
+-   "outputs": [
+-    {
+-     "data": {
+-      "text/plain": [
+-       "dict_keys(['audio', 'text', 'sample_rate'])"
+-      ]
+-     },
+-     "execution_count": 38,
+-     "metadata": {},
+-     "output_type": "execute_result"
+-    }
+-   ],
++   "outputs": [],
+    "source": [
+     "batch1.keys()"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 39,
++   "execution_count": null,
+    "metadata": {},
+-   "outputs": [
+-    {
+-     "data": {
+-      "text/plain": [
+-       "dict_keys(['audio', 'text', 'sample_rate', 'input_lengths', 'target_lengths'])"
+-      ]
+-     },
+-     "execution_count": 39,
+-     "metadata": {},
+-     "output_type": "execute_result"
+-    }
+-   ],
++   "outputs": [],
+    "source": [
+     "batch2.keys()"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 41,
++   "execution_count": null,
+    "metadata": {},
+-   "outputs": [
+-    {
+-     "data": {
+-      "text/plain": [
+-       "tensor([1065,  210, 1066,  567,  895,  627,  925,  197,  833,  973,  498,  909,\n",
+-       "         285, 1097, 1019,  581,  774,  826,  708,  516,  950,  778,  932,  867,\n",
+-       "         978,  672, 1064,  654,  588,  763,  867,  781], device='cuda:0')"
+-      ]
+-     },
+-     "execution_count": 41,
+-     "metadata": {},
+-     "output_type": "execute_result"
+-    }
+-   ],
++   "outputs": [],
+    "source": [
+     "batch2['input_lengths']"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 115,
++   "execution_count": null,
+    "metadata": {},
+-   "outputs": [
+-    {
+-     "name": "stdout",
+-     "output_type": "stream",
+-     "text": [
+-      "32\n",
+-      "212893\n",
+-      "219293\n",
+-      "219293\n"
+-     ]
+-    }
+-   ],
++   "outputs": [],
+    "source": [
+     "print(len(batch1['audio'])) # batchsize\n",
+     "print(len(batch1['audio'][0]))\n",
+@@ -634,25 +413,9 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 92,
++   "execution_count": null,
+    "metadata": {},
+-   "outputs": [
+-    {
+-     "name": "stdout",
+-     "output_type": "stream",
+-     "text": [
+-      "{'audio': array([ 0.00685196, -0.00380555,  0.00689523, ...,  0.0007928 ,\n",
+-      "        0.00087616, -0.00228706], dtype=float32), 'text': array([ 56,  12,  44,   6,  75,  65,  43,  93,  88,  48,  49, 103,  46,\n",
+-      "        62,  13,  99,  78,  13,  46,   5,  42,  47, 119,  56,  47,  11,\n",
+-      "        79,  53,  50,  16,  51,   9,  52,  73,  10,  17,  17,  51,  11,\n",
+-      "        57,  82,  19,  63,   8,  96,   4,  10,  17,  77,  86,  57,  82,\n",
+-      "        19,  42,  98,  43,  42,  12,   6,  11,  72,  53,  12,   7,  17,\n",
+-      "         6,  11,  87,  21,  47,  11,  79,  52,  65,  74,   5,  83,  27,\n",
+-      "        13,  10,  24,  62,  80]), 'sample_rate': 22050}\n",
+-      "(212893,)\n"
+-     ]
+-    }
+-   ],
++   "outputs": [],
+    "source": [
+     "a=train_dataset.dataset.__getitem__(0)\n",
+     "print(a)\n",
+@@ -662,19 +425,9 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 96,
++   "execution_count": null,
+    "metadata": {},
+-   "outputs": [
+-    {
+-     "name": "stdout",
+-     "output_type": "stream",
+-     "text": [
+-      "{'audio': tensor([[-7.3242e-04, -7.6294e-04, -6.4087e-04,  ...,  7.3242e-04,\n",
+-      "          2.1362e-04,  6.1035e-05]]), 'text': 'Printing, in the only sense with which we are at present concerned, differs from most if not from all the arts and crafts represented in the Exhibition', 'sample_rate': 22050}\n",
+-      "torch.Size([1, 212893])\n"
+-     ]
+-    }
+-   ],
++   "outputs": [],
+    "source": [
+     "# load datasets\n",
+     "train_dataset_2 = dataset_module.get_dataset(\n",
+@@ -687,20 +440,9 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 111,
++   "execution_count": null,
+    "metadata": {},
+-   "outputs": [
+-    {
+-     "data": {
+-      "text/plain": [
+-       "96"
+-      ]
+-     },
+-     "execution_count": 111,
+-     "metadata": {},
+-     "output_type": "execute_result"
+-    }
+-   ],
++   "outputs": [],
+    "source": [
+     "len(batch1['audio'][0])\n",
+     "len(batch2['audio'][0])\n",
+diff --git a/wandb/run-20230322_124344-o15p5dpm/files/config.yaml b/wandb/run-20230322_124344-o15p5dpm/files/config.yaml
+index fc644ef..b3c8bf4 100644
+--- a/wandb/run-20230322_124344-o15p5dpm/files/config.yaml
++++ b/wandb/run-20230322_124344-o15p5dpm/files/config.yaml
+@@ -8,6 +8,7 @@ _wandb:
+     is_jupyter_run: true
+     is_kaggle_kernel: false
+     python_version: 3.9.15
++    session_history: code\_session_history.ipynb
+     start_time: 1679449429.631559
+     t:
+       1:
+@@ -24,6 +25,7 @@ _wandb:
+       - 55
+       3:
+       - 1
++      - 2
+       - 16
+       - 23
+       4: 3.9.15
+diff --git a/wandb/run-20230322_124344-o15p5dpm/files/wandb-summary.json b/wandb/run-20230322_124344-o15p5dpm/files/wandb-summary.json
+index 9e26dfe..44a4919 100644
+--- a/wandb/run-20230322_124344-o15p5dpm/files/wandb-summary.json
++++ b/wandb/run-20230322_124344-o15p5dpm/files/wandb-summary.json
+@@ -1 +1 @@
+-{}
+\ No newline at end of file
++{"_wandb": {"runtime": 81}}
+\ No newline at end of file
+diff --git a/wandb/run-20230322_124344-o15p5dpm/run-o15p5dpm.wandb b/wandb/run-20230322_124344-o15p5dpm/run-o15p5dpm.wandb
+index 7b76311..15adb1e 100644
+Binary files a/wandb/run-20230322_124344-o15p5dpm/run-o15p5dpm.wandb and b/wandb/run-20230322_124344-o15p5dpm/run-o15p5dpm.wandb differ

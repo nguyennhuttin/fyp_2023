@@ -1,0 +1,49 @@
+{
+    "os": "Windows-10-10.0.22621-SP0",
+    "python": "3.9.15",
+    "heartbeatAt": "2023-03-20T11:39:03.031319",
+    "startedAt": "2023-03-20T11:39:02.248050",
+    "docker": null,
+    "cuda": null,
+    "args": null,
+    "state": "running",
+    "program": "<python with no main file>",
+    "git": {
+        "remote": "https://github.com/oleges1/quartznet-pytorch.git",
+        "commit": "f4df7f571a267cbec79fbef5ba0fbdac84e2995e"
+    },
+    "email": "nngu0068@student.monash.edu",
+    "root": "C:/Users/nntin/uni/fyp/quartznet-pytorch",
+    "host": "nntin",
+    "username": "nntin",
+    "executable": "c:\\Users\\nntin\\anaconda3\\python.exe",
+    "cpu_count": 14,
+    "cpu_count_logical": 20,
+    "cpu_freq": {
+        "current": 2300.0,
+        "min": 0.0,
+        "max": 2300.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2300.0,
+            "min": 0.0,
+            "max": 2300.0
+        }
+    ],
+    "disk": {
+        "total": 456.11913681030273,
+        "used": 313.07690048217773
+    },
+    "gpu": "NVIDIA GeForce RTX 3050 Ti Laptop GPU",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3050 Ti Laptop GPU",
+            "memory_total": 4294967296
+        }
+    ],
+    "memory": {
+        "total": 15.692127227783203
+    }
+}
