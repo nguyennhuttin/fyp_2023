@@ -391,25 +391,3 @@ for epoch_idx in tqdm(range(config.train.get('epochs', 10))):
         except:
             print('could not use wandb save')
     # break
-
-# %%
-target_strings
-
-# %%
-decoded_output
-
-# %%
-logits.permute(2, 0, 1).log_softmax(
-    dim=2).shape
-
-# %%
-batch2.keys()
-
-# %%
-batch2['input_lengths']
-
-# %%
-print(len(batch1['audio']))  # batchsize
-print(len(batch1['audio'][0]))
-print(len(batch2['audio'][0]))
-print(max([len(x) for x in batch1['audio']]))
