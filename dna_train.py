@@ -90,7 +90,7 @@ class AudioUnsqueeze:
 # %%
 # choosing file
 print(os.getcwd())
-data_file_name_train = "out_csv/full_spacer_detection_10k.csv"
+data_file_name_train = "out_csv/full_spacer_detection.csv"
 data_file_name_val = "out_csv/full_spacer_detection.csv"
 samples_per_sequence_train = 2
 samples_per_sequence_val = 1
@@ -115,17 +115,17 @@ print(
 #Sequential: 26.099690708000026
 
 # %%
-plt.figure(figsize=(30, 10))
-i = 0
-plt.plot(signals[i])
-plt.plot(spacer_labels[i])
-print("Letters:", letter_labels[i], "\nbarcodes:",
-      barcode_labels[i], '\nctc_labels:', ctc_labels[i])
+# plt.figure(figsize=(30, 10))
+# i = 0
+# plt.plot(signals[i])
+# plt.plot(spacer_labels[i])
+# print("Letters:", letter_labels[i], "\nbarcodes:",
+#       barcode_labels[i], '\nctc_labels:', ctc_labels[i])
 
-# print(len(signals))
-# print(len(signals[i]))
-print(([len(x) for x in signals]))
-print(max([len(x) for x in signals]))
+# # print(len(signals))
+# # print(len(signals[i]))
+# print(([len(x) for x in signals]))
+# print(max([len(x) for x in signals]))
 
 # %%
 # Create a "SignalDataset" class by importing the Pytorch Dataset class
@@ -174,7 +174,7 @@ config
 fix_seeds(seed=config.train.get('seed', 42))
 dataset_module = importlib.import_module(
     f'.{config.dataset.name}', data.__name__)
-bpe = prepare_bpe(config)
+# bpe = prepare_bpe(config)
 bpe = DNA_vocab(dna_vocab)
 
 transforms_train = Compose([
