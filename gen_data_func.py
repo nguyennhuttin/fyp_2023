@@ -16,6 +16,7 @@ import randomizeSequence as rSeq
 import ScrappySequence as ss
 import math
 from re import L
+from tqdm import tqdm
 
 
 def generate_samples(mean_curr, stdv_curr, dwell):
@@ -189,14 +190,14 @@ def generate_data2(sequences, comments, currents, std_dev, dwells, num_samples_p
     barcode_labels = [0]*(len(currents)*num_samples_per_reference)
     ctc_labels = [0]*(len(currents)*num_samples_per_reference)
 
-    for i in range(0, len(currents)):  # 'len(currents)' -> number of reference signals
+    for i in tqdm(range(0, len(currents))):  # 'len(currents)' -> number of reference signals
         seq = ss.ScrappySequence(
             sequences[i], currents[i], std_dev[i], dwells[i])
         # remove initial and final 8As
         seq = ss.ScrappySequence.fromSequenceItems(seq.slice(8, len(seq) - 8))
 
-        clear_output()
-        print("Sequence", i + 1, "of", len(currents))
+        # clear_output()
+        # print("Sequence", i + 1, "of", len(currents))
 
         _, barcode_label, letter_label = parse_comment(comments[i])
         ctc_label = intersperse(letter_label, 256)
