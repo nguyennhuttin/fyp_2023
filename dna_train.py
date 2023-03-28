@@ -3,6 +3,7 @@
 
 # %%
 #! constant
+from os import walk
 from IPython.display import clear_output
 from gen_data_func import *
 from decoder import GreedyDecoder, BeamCTCDecoder
@@ -275,8 +276,23 @@ lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
     optimizer, T_max=num_steps)
 # warmup_scheduler = warmup.UntunedLinearWarmup(optimizer)
 
+
+f = []
+mypath = 'checkpoints'
+for (dirpath, dirnames, filenames) in walk(mypath):
+    f.extend(filenames)
+
+best_model_epoch = [int(x.split('_')[1]) for x in f]
+# print(best_model_epoch)
+best_model_name = 'checkpoints/' + \
+    f[best_model_epoch.index(max(best_model_epoch))]
+
 if config.train.get('from_checkpoint', None) is not None:
     model.load_weights(config.train.from_checkpoint)
+    print(f'load from checkpoint {best_model_name}')
+else:
+    model.load_weights(best_model_name)
+    print(f'load from checkpoint {best_model_name}')
 
 if torch.cuda.is_available():
     model = model.cuda()

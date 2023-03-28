@@ -33,7 +33,7 @@ class Decoder(object):
         space_index (int, optional): index for the space ' ' character. Defaults to 28.
     """
 
-    def __init__(self, bpe, blank_index=0, space_simbol='▁', decoder_vis=True):
+    def __init__(self, bpe, blank_index=0, space_simbol='▁', decoder_vis=False):
         # e.g. labels = "_'ABCDEFGHIJKLMNOPQRSTUVWXYZ#"
         self.labels = labels = bpe.vocab()
         self.int_to_char = bpe.id_to_subword
