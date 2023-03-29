@@ -1,7 +1,10 @@
 # adding noise to the signal, python version of the MATLAB code which was sent to me
 # necessary imports
 from scipy import signal as scipy_signal
-from IPython.display import clear_output
+try:
+    from IPython.display import clear_output
+except:
+    pass
 import re
 import numpy as np
 import pandas as pd

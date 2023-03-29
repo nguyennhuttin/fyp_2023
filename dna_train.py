@@ -4,7 +4,10 @@
 # %%
 #! constant
 from os import walk
-from IPython.display import clear_output
+try:
+    from IPython.display import clear_output
+except:
+    pass
 from gen_data_func import *
 from decoder import GreedyDecoder, BeamCTCDecoder
 import wandb
@@ -90,7 +93,7 @@ class AudioUnsqueeze:
 # %%
 # choosing file
 print(os.getcwd())
-data_file_name_train = "out_csv/full_spacer_detection.csv"
+data_file_name_train = "out_csv/full_spacer_detection_10k.csv"
 data_file_name_val = "out_csv/full_spacer_detection.csv"
 samples_per_sequence_train = 2
 samples_per_sequence_val = 1
