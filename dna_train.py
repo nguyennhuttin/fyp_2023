@@ -291,8 +291,9 @@ best_model_name = 'checkpoints/' + \
     f[best_model_epoch.index(max(best_model_epoch))]
 
 if config.train.get('from_checkpoint', None) is not None:
-    model.load_weights(config.train.from_checkpoint)
-    print(f'load from checkpoint {best_model_name}')
+    defined_model_name = 'checkpoints/' + config.train.from_checkpoint
+    model.load_weights(defined_model_name)
+    print(f'load from checkpoint {defined_model_name}')
 else:
     model.load_weights(best_model_name)
     print(f'load from checkpoint {best_model_name}')
@@ -409,4 +410,19 @@ for epoch_idx in tqdm(range(config.train.get('epochs', 10))):
                 'checkpoint_path', 'checkpoints'), f'model_{epoch_idx}_{prev_wer}.pth'))
         except:
             print('could not use wandb save')
+            
+    #! no restriction saving
+    os.makedirs(config.train.get(
+        'checkpoint_path', 'checkpoints_free'), exist_ok=True)
+    prev_wer = val_stats['wer']
+    torch.save(
+        model.state_dict(),
+        os.path.join(config.train.get(
+            'checkpoint_path', 'checkpoints_free'), f'model_{epoch_idx}_{prev_wer}.pth')
+    )
+    try:
+        wandb.save(os.path.join(config.train.get(
+            'checkpoint_path', 'checkpoints_free'), f'model_{epoch_idx}_{prev_wer}.pth'))
+    except:
+        print('could not use wandb save')
     # break
