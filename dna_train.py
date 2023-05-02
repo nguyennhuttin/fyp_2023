@@ -322,6 +322,7 @@ best_model_name = 'checkpoints_free/' + \
 
 if args.new:
     print('##### Training from scratch ######')
+else:
     if config.train.get('from_checkpoint', None) is not None:
         defined_model_name = 'checkpoints/' + config.train.from_checkpoint
         model.load_weights(defined_model_name)
