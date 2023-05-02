@@ -209,13 +209,14 @@ def intersperse(lst, item):
 # 'num_samples_per_reference' refers to number of noisy signals generated from a single reference signal
 
 
-def generate_data2(sequences, comments, currents, std_dev, dwells, num_samples_per_reference, full=True, using_barcode=True, num_letter=7):
+def generate_data2(sequences, comments, currents, std_dev, dwells, num_samples_per_reference, full=True, using_barcode=True, num_letter=7, spacer_idx=256):
     assert len(sequences) == len(comments) == len(
         currents) == len(std_dev) == len(dwells)
 
     signals = [0]*(len(currents)*num_samples_per_reference)
     index = []
     spacer_labels = [0]*(len(currents)*num_samples_per_reference)
+    spacer_labels2 = [0]*(len(currents)*num_samples_per_reference)
     letter_labels = [0]*(len(currents)*num_samples_per_reference)
     barcode_labels = [0]*(len(currents)*num_samples_per_reference)
     ctc_labels = [0]*(len(currents)*num_samples_per_reference)
@@ -231,7 +232,7 @@ def generate_data2(sequences, comments, currents, std_dev, dwells, num_samples_p
 
         _, barcode_label, letter_label = parse_comment(
             comments[i], full)
-        ctc_label = intersperse(letter_label, 256)
+        ctc_label = intersperse(letter_label, spacer_idx)
 
         for j in range(0, num_samples_per_reference):
             # noisy signal generation for each instance
@@ -246,17 +247,24 @@ def generate_data2(sequences, comments, currents, std_dev, dwells, num_samples_p
             barcode_labels[i * num_samples_per_reference + j] = barcode_label
             ctc_labels[i * num_samples_per_reference + j] = ctc_label
 
-    return signals, index, spacer_labels, letter_labels, barcode_labels, ctc_labels
+            spacer_label2 = spacer_label.copy()
+            spacer_region = spacer_label2 == 1
+            letter_region = spacer_label2 == 0
+            spacer_label2[spacer_region] = 256
+            spacer_label2[letter_region] = letter_label
+            spacer_labels2[i * num_samples_per_reference + j] = spacer_label2
+
+    return signals, index, spacer_labels, letter_labels, barcode_labels, ctc_labels, spacer_labels2
 
 # generating training data
 
 
-def prepare_train2(dataset_path, num_samples_per_reference, full=True, using_barcode=True, num_letter=7):
+def prepare_train2(dataset_path, num_samples_per_reference, full=True, using_barcode=True, num_letter=7, spacer_idx=256):
     sequences, comments, currents, std_dev, dwells = read_data(
         dataset_path)  # read the reference signals
-    signals, index, spacer_labels, letter_labels, barcode_labels, ctc_labels = generate_data2(
-        sequences, comments, currents, std_dev, dwells, num_samples_per_reference, full, using_barcode, num_letter)  # generate the noisy dataset from reference signals
-    return signals, index, spacer_labels, letter_labels, barcode_labels, ctc_labels
+    signals, index, spacer_labels, letter_labels, barcode_labels, ctc_labels, spacer_labels2 = generate_data2(
+        sequences, comments, currents, std_dev, dwells, num_samples_per_reference, full, using_barcode, num_letter, spacer_idx)  # generate the noisy dataset from reference signals
+    return signals, index, spacer_labels, letter_labels, barcode_labels, ctc_labels, spacer_labels2
 
 # processed the noisy signals to obtain fixed size vectors for each instance
 # truncated the signals to size of minimum length signal

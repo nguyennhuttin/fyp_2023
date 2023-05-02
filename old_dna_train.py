@@ -3,11 +3,12 @@
 
 # %%
 #! constant
+from os import walk
 try:
     from IPython.display import clear_output
 except:
     pass
-from gen_data_func2 import *
+from gen_data_func import *
 from decoder import GreedyDecoder, BeamCTCDecoder
 import wandb
 from utils import fix_seeds, remove_from_dict, prepare_bpe
@@ -48,40 +49,10 @@ import ScrappySequence as ss
 import randomizeSequence as rSeq
 BLANK_VAL = 257
 dna_vocab = [f"_{x}_" for x in range(256)]  # .append(['spacer','blank'])
-space_symbol = 'spacer'
-dna_vocab.append(space_symbol)
+dna_vocab.append('spacer')
 dna_vocab.append('blank')
+dna_vocab.append('_')
 
-parser = argparse.ArgumentParser(description='Training model.')
-parser.add_argument('--config', default='configs/train_LJSpeech.yaml',
-                    help='path to config file')
-parser.add_argument('--checkpoint_path', default='checkpoints_free',
-                    help='path to checkpoint file')
-
-# full=True, using_barcode=True, num_letter=7
-parser.add_argument('--seg', action='store_false',
-                    help='using only 1 seq s-l-s')
-parser.add_argument('--no_bc', action='store_false',
-                    help='specify data has no barcode')
-parser.add_argument('--numletter', default='7',
-                    help='specify number of letter')
-
-# data_file_name_train = "out_csv/full_spacer_detection_10k.csv"
-# data_file_name_val = "out_csv/full_spacer_detection.csv"
-parser.add_argument('--train_data', default="out_csv/full_spacer_detection_10k.csv",
-                    help='path to train data')
-parser.add_argument('--valid_data', default="out_csv/full_spacer_detection.csv",
-                    help='path to train data')
-parser.add_argument('--new', action='store_true',
-                    help='start training from scratch')
-parser.add_argument('--model_name', default='model',
-                    help='model name')
-parser.add_argument('--mode', default='word',
-                    help='model name')
-args = parser.parse_args()
-# print(args.seg)
-print('\n!!!!args!!!')
-print(args)
 #! Tin
 
 #!/usr/bin/env python
@@ -121,52 +92,39 @@ class AudioUnsqueeze:
 
 # %%
 # choosing file
-print('current directory:', os.getcwd())
-# data_file_name_train = "out_csv/full_spacer_detection_10k.csv"
-# data_file_name_val = "out_csv/full_spacer_detection.csv"
-data_file_name_train = args.train_data
-data_file_name_val = args.valid_data
-
-
+print(os.getcwd())
+data_file_name_train = "out_csv/full_spacer_detection_10k.csv"
+data_file_name_val = "out_csv/full_spacer_detection.csv"
 samples_per_sequence_train = 2
 samples_per_sequence_val = 1
 
-# ! load train
-print(f'loading train data from {data_file_name_train}')
+
 # %%
 start = time.monotonic()
-signals, index, spacer_labels, letter_labels, barcode_labels, ctc_labels, spacer_labels2 = prepare_train2(
-    data_file_name_train, samples_per_sequence_train, args.seg, args.no_bc, int(args.numletter))
+signals, index, spacer_labels, letter_labels, barcode_labels, ctc_labels = prepare_train2(
+    data_file_name_train, samples_per_sequence_train)
 end = time.monotonic()
 print(
     f"Generated {len(signals)} signals and {len(spacer_labels)} labels", f"in {end-start}")
 # Sequential: 26.099690708000026b
 
-# ! load valid
-print(f'loading val data from {data_file_name_val}')
 # %%
 start = time.monotonic()
-signals_v, index_v, spacer_labels_v, letter_labels_v, barcode_labels_v, ctc_labels_v, spacer_labels2_v = prepare_train2(
-    data_file_name_val, samples_per_sequence_val, args.seg, args.no_bc, int(args.numletter))
+signals_v, index_v, spacer_labels_v, letter_labels_v, barcode_labels_v, ctc_labels_v = prepare_train2(
+    data_file_name_val, samples_per_sequence_val)
 end = time.monotonic()
 print(
     f"Generated {len(signals)} signals and {len(spacer_labels)} labels", f"in {end-start}")
 #Sequential: 26.099690708000026
 
 # %%
-plt.figure(figsize=(30, 10))
-i = 0
-plt.plot(signals[i])
-plt.plot(spacer_labels[i])
-plt.title(
-    f'letters:{letter_labels[i]}, barcodes:{barcode_labels[i]}, ctc_labels:{ctc_labels[i]}')
-print("Letters:", letter_labels[i], "\nbarcodes:",
-      barcode_labels[i], '\nctc_labels:', ctc_labels[i])
-plt.savefig('fig/signal_vis')
+# plt.figure(figsize=(30, 10))
+# i = 0
+# plt.plot(signals[i])
+# plt.plot(spacer_labels[i])
+# print("Letters:", letter_labels[i], "\nbarcodes:",
+#       barcode_labels[i], '\nctc_labels:', ctc_labels[i])
 
-plt.figure(figsize=(30, 10))
-plt.plot(spacer_labels2[i])
-plt.savefig('fig/spacer_labels2')
 # # print(len(signals))
 # # print(len(signals[i]))
 # print(([len(x) for x in signals]))
@@ -199,6 +157,10 @@ class Dataset_ctc(Dataset):
 # TODO: wrap to trainer class
 
 
+parser = argparse.ArgumentParser(description='Training model.')
+parser.add_argument('--config', default='configs/train_LJSpeech.yaml',
+                    help='path to config file')
+args = parser.parse_args()
 with open(args.config, 'r') as f:
     config = edict(yaml.safe_load(f))
 
@@ -217,7 +179,6 @@ dataset_module = importlib.import_module(
     f'.{config.dataset.name}', data.__name__)
 # bpe = prepare_bpe(config)
 bpe = DNA_vocab(dna_vocab)
-print('DNA vocab:', dna_vocab)
 
 transforms_train = Compose([
     # TextPreprocess(),# removing punctuation in text - might not needed
@@ -286,12 +247,8 @@ batch_transforms_val = Compose([
 #     config, transforms=transforms_val, part='val')
 
 # ! TIN Dataset
-if args.mode == 'word':
-    train_dataset = Dataset_ctc(signals, ctc_labels)
-    val_dataset = Dataset_ctc(signals_v, ctc_labels_v)
-elif args.mode == 'sample':
-    train_dataset = Dataset_ctc(signals, spacer_labels2)
-    val_dataset = Dataset_ctc(signals_v, spacer_labels2_v)
+train_dataset = Dataset_ctc(signals, ctc_labels)
+val_dataset = Dataset_ctc(signals_v, ctc_labels_v)
 
 # print("!!!", config.train.get('num_workers', 4))
 train_dataloader = DataLoader(train_dataset,
@@ -324,29 +281,22 @@ lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
 
 
 f = []
-mypath = args.checkpoint_path
-for (dirpath, dirnames, filenames) in os.walk(mypath):
+mypath = 'checkpoints'
+for (dirpath, dirnames, filenames) in walk(mypath):
     f.extend(filenames)
 
-#! load best model by epoch
 best_model_epoch = [int(x.split('_')[1]) for x in f]
 # print(best_model_epoch)
-best_model_name = mypath + '/' + \
+best_model_name = 'checkpoints/' + \
     f[best_model_epoch.index(max(best_model_epoch))]
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-if args.new:  # ! if new is specified then start from scratch
-    print('##### Training from scratch ######')
+if config.train.get('from_checkpoint', None) is not None:
+    defined_model_name = 'checkpoints/' + config.train.from_checkpoint
+    model.load_weights(defined_model_name)
+    print(f'load from checkpoint {defined_model_name}')
 else:
-    # ! load from checkpoint specified in the yaml
-    if config.train.get('from_checkpoint', None) is not None:
-        # ! checkpoints folder contain checkpoint that is constraint by performance
-        defined_model_name = 'checkpoints/' + config.train.from_checkpoint
-        model.load_weights(defined_model_name)
-        print(f'load from checkpoint {defined_model_name}')
-    else:  # ! if no checkpoint specified in yaml load the best checkpoint from epoch
-        model.load_weights(best_model_name)  # best by epoch
-        print(f'load from checkpoint {best_model_name}')
+    model.load_weights(best_model_name)
+    print(f'load from checkpoint {best_model_name}')
 
 if torch.cuda.is_available():
     model = model.cuda()
@@ -354,17 +304,16 @@ if torch.cuda.is_available():
 
 criterion = nn.CTCLoss(blank=BLANK_VAL, reduction='mean', zero_infinity=True)
 # criterion = nn.CTCLoss(blank=config.model.vocab_size)
-decoder = GreedyDecoder(bpe=bpe, blank_index=BLANK_VAL,
-                        space_simbol=space_symbol)
+decoder = GreedyDecoder(bpe=bpe, blank_index=BLANK_VAL, space_simbol='_')
 
 prev_wer = 1000
 #! TIN CHNAGE
-wandb.init(project=config.wandb.project, config=config, name=args.model_name)
+wandb.init(project=config.wandb.project, config=config)
 wandb.watch(model, log="all", log_freq=config.wandb.get(
     'log_interval', 5000))
 
 # %%
-print('START TRAINING')
+
 for epoch_idx in tqdm(range(config.train.get('epochs', 10))):
     # train:
     model.train()
@@ -396,7 +345,7 @@ for epoch_idx in tqdm(range(config.train.get('epochs', 10))):
         # warmup_scheduler.dampen()
         # break
         if batch_idx % config.wandb.get('log_interval', 5000) == 0:
-            target_strings = decoder.convert_to_strings(batch['text'].int())
+            target_strings = decoder.convert_to_strings(batch['text'])
             decoded_output = decoder.decode(
                 logits.permute(0, 2, 1).softmax(dim=2))
             wer = np.mean([decoder.wer(true, pred)
@@ -430,7 +379,7 @@ for epoch_idx in tqdm(range(config.train.get('epochs', 10))):
             loss = criterion(logits.permute(2, 0, 1).log_softmax(
                 dim=2), batch['text'], output_length, batch['target_lengths'])
 
-        target_strings = decoder.convert_to_strings(batch['text'].int())
+        target_strings = decoder.convert_to_strings(batch['text'])
         decoded_output = decoder.decode(
             logits.permute(0, 2, 1).softmax(dim=2))
         wer = np.mean([decoder.wer(true, pred)
@@ -447,8 +396,6 @@ for epoch_idx in tqdm(range(config.train.get('epochs', 10))):
     wandb.log(val_stats, step=step)
 
     # save model, TODO: save optimizer:
-
-    #! unless defined in the yaml file with save in checkpoints
     if val_stats['wer'] < prev_wer:
         os.makedirs(config.train.get(
             'checkpoint_path', 'checkpoints'), exist_ok=True)
@@ -456,24 +403,26 @@ for epoch_idx in tqdm(range(config.train.get('epochs', 10))):
         torch.save(
             model.state_dict(),
             os.path.join(config.train.get(
-                'checkpoint_path', 'checkpoints'), f'{args.model_name}_{epoch_idx}_{prev_wer}.pth')
+                'checkpoint_path', 'checkpoints'), f'model_{epoch_idx}_{prev_wer}.pth')
         )
         try:
             wandb.save(os.path.join(config.train.get(
-                'checkpoint_path', 'checkpoints'), f'{args.model_name}_{epoch_idx}_{prev_wer}.pth'))
+                'checkpoint_path', 'checkpoints'), f'model_{epoch_idx}_{prev_wer}.pth'))
         except:
             print('could not use wandb save')
 
     #! no restriction saving
-    os.makedirs(mypath, exist_ok=True)
+    os.makedirs(config.train.get(
+        'checkpoint_path', 'checkpoints_free'), exist_ok=True)
     prev_wer = val_stats['wer']
     torch.save(
         model.state_dict(),
-        os.path.join(mypath, f'{args.model_name}_{epoch_idx}_{prev_wer}.pth')
+        os.path.join(config.train.get(
+            'checkpoint_path', 'checkpoints_free'), f'model_{epoch_idx}_{prev_wer}.pth')
     )
     try:
-        wandb.save(os.path.join(
-            mypath, f'{args.model_name}_{epoch_idx}_{prev_wer}.pth'))
+        wandb.save(os.path.join(config.train.get(
+            'checkpoint_path', 'checkpoints_free'), f'model_{epoch_idx}_{prev_wer}.pth'))
     except:
         print('could not use wandb save')
     # break
