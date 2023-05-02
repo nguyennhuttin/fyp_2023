@@ -131,9 +131,12 @@ class Decoder(object):
 
 class BeamCTCDecoder(Decoder):
     def __init__(self, bpe, lm_path=None, alpha=0, beta=0, cutoff_top_n=40, cutoff_prob=1.0, beam_width=100,
-                 num_processes=4, blank_index=0):
+                 num_processes=4, blank_index=0, space_simbol='spacer'):
         self.labels = labels = bpe.vocab()
-        super(BeamCTCDecoder, self).__init__(bpe=bpe)
+        # print(self.labels)
+
+        super(BeamCTCDecoder, self).__init__(
+            bpe=bpe, blank_index=blank_index, space_simbol=space_simbol)
         try:
             from ctcdecode import CTCBeamDecoder
         except ImportError:

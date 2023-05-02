@@ -15,7 +15,7 @@ train:
   optimizer:
     lr: 0.0005 # 0.0003 - Karpathy great constant for Adam
     weight_decay: 0.0001 # leave default
-  from_checkpoint: model_1_0.9333333333333335.pth
+  # from_checkpoint: model_1_0.9333333333333335.pth
 
 wandb:
   project: DNA_FYP_2023
