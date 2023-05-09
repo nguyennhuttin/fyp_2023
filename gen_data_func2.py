@@ -1,6 +1,7 @@
 # adding noise to the signal, python version of the MATLAB code which was sent to me
 # necessary imports
 from scipy import signal as scipy_signal
+
 try:
     from IPython.display import clear_output
 except:
@@ -8,6 +9,7 @@ except:
 import re
 import numpy as np
 import pandas as pd
+
 # from sklearn.utils import shuffle
 # from keras.models import Sequential
 # from keras.layers import Dense
@@ -26,21 +28,24 @@ def generate_samples(mean_curr, stdv_curr, dwell):
     signal_s = []
     index_s = []
     for i in range(0, len(mean_curr)):
-        p = 1/dwell[i]
+        p = 1 / dwell[i]
         if p > 1:
             p = 1
         r = np.random.geometric(p=p) + 1
         signal_s = np.concatenate(
-            (signal_s, stdv_curr[i]*np.random.normal(size=r)+mean_curr[i]))
-        index_s = np.concatenate((index_s, i*np.ones(r)))
+            (signal_s, stdv_curr[i] * np.random.normal(size=r) + mean_curr[i])
+        )
+        index_s = np.concatenate((index_s, i * np.ones(r)))
     # print(index_s)
     return signal_s, index_s
+
 
 # reading the reference signals from the scrappie squiggle outputs
 
 
-def read_data(datafile_path):  # 'datafile_path' refers to the squiggle output file in .csv format
-
+def read_data(
+    datafile_path,
+):  # 'datafile_path' refers to the squiggle output file in .csv format
     currents = []  # list of all reference currents
     std_dev = []
     dwells = []
@@ -52,16 +57,15 @@ def read_data(datafile_path):  # 'datafile_path' refers to the squiggle output f
     dev = []
     dw = []
 
-    with open(datafile_path, 'r') as f:
+    with open(datafile_path, "r") as f:
         for line in f:
-
-            if line.startswith('#'):
+            if line.startswith("#"):
                 comments.append(line)
 
-            elif line.startswith('pos'):
+            elif line.startswith("pos"):
                 if len(curr) == 0:
                     continue
-                sequences.append(''.join(sequence))
+                sequences.append("".join(sequence))
                 currents.append(curr)
                 std_dev.append(dev)
                 dwells.append(dw)
@@ -72,14 +76,14 @@ def read_data(datafile_path):  # 'datafile_path' refers to the squiggle output f
                 dw = []
 
             else:
-                parts = line.split(',')
+                parts = line.split(",")
                 assert len(parts) == 5
                 sequence.append(parts[1])
                 curr.append(float(parts[2]))
                 dev.append(float(parts[3]))
                 dw.append(float(parts[4]))
 
-    sequences.append(''.join(sequence))
+    sequences.append("".join(sequence))
     currents.append(curr)
     std_dev.append(dev)
     dwells.append(dw)
@@ -88,14 +92,12 @@ def read_data(datafile_path):  # 'datafile_path' refers to the squiggle output f
 
 
 def generate_label(indexes, spacer_len=6, letter_len=7):
-
     label = np.zeros(len(indexes))
 
     is_in_letter = True
     remaining = letter_len
     previous = 0
     for i, v in enumerate(indexes):  # indexes 00001111
-
         if v != previous:
             remaining -= 1
             previous = v
@@ -111,19 +113,21 @@ def generate_label(indexes, spacer_len=6, letter_len=7):
         else:
             label[i] = 1
 
-#is_in_letter = T
-#remaining = 6
-#previous = -1
-#  L     L    L      L L L L S S S S  S  S  L  L  L  L  L  L  L  S  S  S  S  S  S  L  L  L  L  L  L  L  S
+    # is_in_letter = T
+    # remaining = 6
+    # previous = -1
+    #  L     L    L      L L L L S S S S  S  S  L  L  L  L  L  L  L  S  S  S  S  S  S  L  L  L  L  L  L  L  S
     # 00000 1111 222222 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33
     # 0     0000 000000 0 0 0 0 1 1 1 1  1  1  0
     return label
 
 
-def generate_spacer_label(indexes, spacer_len=6, letter_len=7, using_barcode=True, num_letter=7):
+def generate_spacer_label(
+    indexes, spacer_len=6, letter_len=7, using_barcode=True, num_letter=7
+):
     indexes = list(indexes)
 
-    lsl_num_spaces = num_letter*letter_len+(num_letter+1)*spacer_len
+    lsl_num_spaces = num_letter * letter_len + (num_letter + 1) * spacer_len
     if using_barcode:
         first_spacer_idx = 56
     else:
@@ -134,15 +138,15 @@ def generate_spacer_label(indexes, spacer_len=6, letter_len=7, using_barcode=Tru
 
     # print('checking', first_spacer_idx + lsl_num_spaces - 1)
 
-    last_spacer_base = len(
-        indexes) - 1 - indexes[::-1].index(first_spacer_idx + lsl_num_spaces - 1)
+    last_spacer_base = (
+        len(indexes) - 1 - indexes[::-1].index(first_spacer_idx + lsl_num_spaces - 1)
+    )
 
     label = np.zeros(len(indexes))
 
     is_in_spacer = True
     remaining = spacer_len
-    for i, v in enumerate(indexes[first_spacer_base:last_spacer_base+1]):
-
+    for i, v in enumerate(indexes[first_spacer_base : last_spacer_base + 1]):
         if v != previous:
             remaining -= 1
             previous = v
@@ -170,7 +174,9 @@ def generate_spacer_label(indexes, spacer_len=6, letter_len=7, using_barcode=Tru
 def parse_comment(comment, full=True):
     if full:
         match = re.search(
-            "^#Seq\[(\d+\.) (\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)\],,,,$", comment)
+            "^#Seq\[(\d+\.) (\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)\],,,,$",
+            comment,
+        )
         assert match is not None, "The comment string is not in the correct format"
         groups = list(match.groups())
 
@@ -179,12 +185,12 @@ def parse_comment(comment, full=True):
         sequence_no = groups[0]
         barcodes = groups[1:3]
         letters = groups[3:10]
-        assert len(barcodes) == 2 and len(
-            letters) == 7, f"groups: {groups} barcodes: {len(barcodes)} letters: {len(letters)}"
+        assert (
+            len(barcodes) == 2 and len(letters) == 7
+        ), f"groups: {groups} barcodes: {len(barcodes)} letters: {len(letters)}"
         return sequence_no, [int(i) for i in barcodes], [int(i) for i in letters]
     else:
-        match = re.search(
-            "^#Seq\[(\d+\.) (\d+)\],,,,$", comment)
+        match = re.search("^#Seq\[(\d+\.) (\d+)\],,,,$", comment)
         assert match is not None, "The comment string is not in the correct format"
         groups = list(match.groups())
         # print(groups)
@@ -206,40 +212,53 @@ def intersperse(lst, item):
     result.insert(0, item)
     return result
 
+
 # 'num_samples_per_reference' refers to number of noisy signals generated from a single reference signal
 
 
-def generate_data2(sequences, comments, currents, std_dev, dwells, num_samples_per_reference, full=True, using_barcode=True, num_letter=7, spacer_idx=256):
-    assert len(sequences) == len(comments) == len(
-        currents) == len(std_dev) == len(dwells)
+def generate_data2(
+    sequences,
+    comments,
+    currents,
+    std_dev,
+    dwells,
+    num_samples_per_reference,
+    full=True,
+    using_barcode=True,
+    num_letter=7,
+    spacer_idx=256,
+):
+    assert (
+        len(sequences) == len(comments) == len(currents) == len(std_dev) == len(dwells)
+    )
 
-    signals = [0]*(len(currents)*num_samples_per_reference)
+    signals = [0] * (len(currents) * num_samples_per_reference)
     index = []
-    spacer_labels = [0]*(len(currents)*num_samples_per_reference)
-    spacer_labels2 = [0]*(len(currents)*num_samples_per_reference)
-    letter_labels = [0]*(len(currents)*num_samples_per_reference)
-    barcode_labels = [0]*(len(currents)*num_samples_per_reference)
-    ctc_labels = [0]*(len(currents)*num_samples_per_reference)
+    spacer_labels = [0] * (len(currents) * num_samples_per_reference)
+    spacer_labels2 = [0] * (len(currents) * num_samples_per_reference)
+    letter_labels = [0] * (len(currents) * num_samples_per_reference)
+    barcode_labels = [0] * (len(currents) * num_samples_per_reference)
+    ctc_labels = [0] * (len(currents) * num_samples_per_reference)
 
-    for i in tqdm(range(0, len(currents))):  # 'len(currents)' -> number of reference signals
-        seq = ss.ScrappySequence(
-            sequences[i], currents[i], std_dev[i], dwells[i])
+    for i in tqdm(
+        range(0, len(currents))
+    ):  # 'len(currents)' -> number of reference signals
+        seq = ss.ScrappySequence(sequences[i], currents[i], std_dev[i], dwells[i])
         # remove initial and final 8As
         seq = ss.ScrappySequence.fromSequenceItems(seq.slice(8, len(seq) - 8))
 
         # clear_output()
         # print("Sequence", i + 1, "of", len(currents))
 
-        _, barcode_label, letter_label = parse_comment(
-            comments[i], full)
+        _, barcode_label, letter_label = parse_comment(comments[i], full)
         ctc_label = intersperse(letter_label, spacer_idx)
 
         for j in range(0, num_samples_per_reference):
             # noisy signal generation for each instance
-            signal_s, index_s = generate_samples(
-                seq.currents, seq.sds, seq.dwells)
+            signal_s, index_s = generate_samples(seq.currents, seq.sds, seq.dwells)
             spacer_label = generate_spacer_label(
-                index_s, using_barcode=using_barcode, num_letter=num_letter)
+                index_s, using_barcode=using_barcode, num_letter=num_letter
+            )
 
             signals[i * num_samples_per_reference + j] = signal_s
             spacer_labels[i * num_samples_per_reference + j] = spacer_label
@@ -250,21 +269,65 @@ def generate_data2(sequences, comments, currents, std_dev, dwells, num_samples_p
             spacer_label2 = spacer_label.copy()
             spacer_region = spacer_label2 == 1
             letter_region = spacer_label2 == 0
-            spacer_label2[spacer_region] = 256
+            spacer_label2[spacer_region] = spacer_idx
             spacer_label2[letter_region] = letter_label
             spacer_labels2[i * num_samples_per_reference + j] = spacer_label2
 
-    return signals, index, spacer_labels, letter_labels, barcode_labels, ctc_labels, spacer_labels2
+    return (
+        signals,
+        index,
+        spacer_labels,
+        letter_labels,
+        barcode_labels,
+        ctc_labels,
+        spacer_labels2,
+    )
+
 
 # generating training data
 
 
-def prepare_train2(dataset_path, num_samples_per_reference, full=True, using_barcode=True, num_letter=7, spacer_idx=256):
+def prepare_train2(
+    dataset_path,
+    num_samples_per_reference,
+    full=True,
+    using_barcode=True,
+    num_letter=7,
+    spacer_idx=256,
+):
     sequences, comments, currents, std_dev, dwells = read_data(
-        dataset_path)  # read the reference signals
-    signals, index, spacer_labels, letter_labels, barcode_labels, ctc_labels, spacer_labels2 = generate_data2(
-        sequences, comments, currents, std_dev, dwells, num_samples_per_reference, full, using_barcode, num_letter, spacer_idx)  # generate the noisy dataset from reference signals
-    return signals, index, spacer_labels, letter_labels, barcode_labels, ctc_labels, spacer_labels2
+        dataset_path
+    )  # read the reference signals
+    (
+        signals,
+        index,
+        spacer_labels,
+        letter_labels,
+        barcode_labels,
+        ctc_labels,
+        spacer_labels2,
+    ) = generate_data2(
+        sequences,
+        comments,
+        currents,
+        std_dev,
+        dwells,
+        num_samples_per_reference,
+        full,
+        using_barcode,
+        num_letter,
+        spacer_idx,
+    )  # generate the noisy dataset from reference signals
+    return (
+        signals,
+        index,
+        spacer_labels,
+        letter_labels,
+        barcode_labels,
+        ctc_labels,
+        spacer_labels2,
+    )
+
 
 # processed the noisy signals to obtain fixed size vectors for each instance
 # truncated the signals to size of minimum length signal

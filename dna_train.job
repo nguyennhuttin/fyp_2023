@@ -39,4 +39,4 @@ source .venv/bin/activate
 # -- wand_entity           Just in case you are in multiple team            
 
 # srun python3 python full_spacer_detection.py --num_gpus 1 --skip_training  --csv_file full_spacer_detection_10k.csv --model_name full_spacer_detection_10k
-python dna_train.py
+python dna_train.py --train_data out_csv/lsl_10k.csv --valid_data out_csv/lsl_1k.csv --numletter 1 --no_bc --seg --new --model_name compresslsl --mode compress
