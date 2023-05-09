@@ -236,6 +236,7 @@ start = time.monotonic()
     args.seg,
     args.no_bc,
     int(args.numletter),
+    spacer_idx=spacer_idx,
 )
 end = time.monotonic()
 print(
