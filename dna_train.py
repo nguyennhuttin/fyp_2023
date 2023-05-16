@@ -7,7 +7,7 @@ try:
     from IPython.display import clear_output
 except:
     pass
-from gen_data_func2 import *
+from gen_data_func2_new import *
 from decoder import GreedyDecoder, BeamCTCDecoder
 import wandb
 from utils import fix_seeds, remove_from_dict, prepare_bpe
@@ -95,6 +95,11 @@ parser.add_argument(
 parser.add_argument("--new", action="store_true", help="start training from scratch")
 parser.add_argument("--model_name", default="model", help="model name")
 parser.add_argument("--mode", default="word", help="model name")
+parser.add_argument(
+    "--eval", action="store_true", help="skip training and do evaluation"
+)
+parser.add_argument("--custom", action="store_true", help="use custom testing case")
+parser.add_argument("--customfile", default="temp_data/segs_val_dataset.pt")
 args = parser.parse_args()
 # print(args.seg)
 print("\n!!!!args!!!")
@@ -397,6 +402,7 @@ batch_transforms_val = Compose(
 #     config, transforms=transforms_val, part='val')
 
 # ! TIN Dataset
+print("####### MODE: ########")
 if args.mode == "word":
     train_dataset = Dataset_ctc(signals, ctc_labels)
     val_dataset = Dataset_ctc(signals_v, ctc_labels_v)
@@ -411,6 +417,9 @@ elif args.mode == "compress":
     [signal_qs_v, label_qs_v, all_states_v] = compress_sig(spacer_labels2_v, signals_v)
     train_dataset = Dataset_ctc(signal_qs, ctc_labels)
     val_dataset = Dataset_ctc(signal_qs_v, ctc_labels_v)
+    if args.custom:
+        val_dataset = torch.load(args.customfile)
+        print("#### USING CUSTOM TEST FILE ####")
     print("using compress mode")
 
     idx = 0
@@ -484,17 +493,22 @@ mypath = args.checkpoint_path
 for dirpath, dirnames, filenames in os.walk(mypath):
     f.extend(filenames)
 
-#! load best model by epoch
-best_model_epoch = [int(x.split("_")[1]) for x in f]
-# print(best_model_epoch)
-best_model_name = mypath + "/" + f[best_model_epoch.index(max(best_model_epoch))]
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 if args.new:  # ! if new is specified then start from scratch
-    print("##### Training from scratch ######")
+    print("##### FROM SCRATCH ######")
 else:
+    #! load best model by epoch
+    best_model_epoch = [
+        int(x.split("_")[1]) for x in f if x.split("_")[0] == args.model_name
+    ]
+    # print(best_model_epoch)
+    best_model_name = mypath + "/" + f[best_model_epoch.index(max(best_model_epoch))]
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     # ! load from checkpoint specified in the yaml
+    print("##### CHECKPOINT ######")
     if config.train.get("from_checkpoint", None) is not None:
+        print("load file specified in yaml file")
         # ! checkpoints folder contain checkpoint that is constraint by performance
         defined_model_name = "checkpoints/" + config.train.from_checkpoint
         model.load_weights(defined_model_name)
@@ -502,6 +516,7 @@ else:
     else:  # ! if no checkpoint specified in yaml load the best checkpoint from epoch
         model.load_weights(best_model_name)  # best by epoch
         print(f"load from checkpoint {best_model_name}")
+
 
 if torch.cuda.is_available():
     model = model.cuda()
@@ -513,46 +528,103 @@ decoder = GreedyDecoder(bpe=bpe, blank_index=BLANK_VAL, space_simbol=space_symbo
 
 prev_wer = 1000
 #! TIN CHNAGE
-wandb.init(project=config.wandb.project, config=config, name=args.model_name)
-wandb.watch(model, log="all", log_freq=config.wandb.get("log_interval", 5000))
+if not args.eval:
+    wandb.init(project=config.wandb.project, config=config, name=args.model_name)
+    wandb.watch(model, log="all", log_freq=config.wandb.get("log_interval", 5000))
+else:
+    print("Only evaluating no logging")
 
 # %%
-print("START TRAINING")
-for epoch_idx in tqdm(range(config.train.get("epochs", 10))):
-    # train:
-    model.train()
-    for batch_idx, batch in enumerate(train_dataloader):
-        batch1 = batch
-        # print(len(batch1['audio'][0]))
-        batch = batch_transforms_train(batch)
-        batch2 = batch
-        # print(len(batch2['audio'][0]))
 
-        optimizer.zero_grad()
-        logits = model(batch["audio"].float())
+if not args.eval:
+    print("##### START TRAINING ######")
+    for epoch_idx in tqdm(range(config.train.get("epochs", 10))):
+        #! train: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        model.train()
+        for batch_idx, batch in enumerate(train_dataloader):
+            # batch1 = batch
+            # print(len(batch1['audio'][0]))
+            batch = batch_transforms_train(batch)
+            # batch2 = batch
+            # print(len(batch2['audio'][0]))
 
-        output_length = torch.ceil(batch["input_lengths"].float() / model.stride).int()
+            optimizer.zero_grad()
+            logits = model(batch["audio"].float())
 
-        # print('batch audio shape:', batch['audio'].shape, batch['audio'].dtype )
-        # print('logits shape:', logits.shape)
-        # print('output_length shape:',output_length)
-        # print('target_lengths:',batch['target_lengths'])
+            output_length = torch.ceil(
+                batch["input_lengths"].float() / model.stride
+            ).int()
 
-        loss = criterion(
-            logits.permute(2, 0, 1).log_softmax(dim=2),
-            batch["text"],
-            output_length,
-            batch["target_lengths"],
-        )  # target_length is the length of text of batch1 (before batch aug)
-        loss.backward()
-        torch.nn.utils.clip_grad_norm_(
-            model.parameters(), config.train.get("clip_grad_norm", 15)
-        )
-        optimizer.step()
-        lr_scheduler.step()
-        # warmup_scheduler.dampen()
-        # break
-        if batch_idx % config.wandb.get("log_interval", 5000) == 0:
+            # print('batch audio shape:', batch['audio'].shape, batch['audio'].dtype )
+            # print('logits shape:', logits.shape)
+            # print('output_length shape:',output_length)
+            # print('target_lengths:',batch['target_lengths'])
+
+            loss = criterion(
+                logits.permute(2, 0, 1).log_softmax(dim=2),
+                batch["text"],
+                output_length,
+                batch["target_lengths"],
+            )  # target_length is the length of text of batch1 (before batch aug)
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(
+                model.parameters(), config.train.get("clip_grad_norm", 15)
+            )
+            optimizer.step()
+            lr_scheduler.step()
+            # warmup_scheduler.dampen()
+            # break
+            if batch_idx % config.wandb.get("log_interval", 5000) == 0:
+                target_strings = decoder.convert_to_strings(batch["text"].int())
+                decoded_output = decoder.decode(logits.permute(0, 2, 1).softmax(dim=2))
+                wer = np.mean(
+                    [
+                        decoder.wer(true, pred)
+                        for true, pred in zip(target_strings, decoded_output)
+                    ]
+                )
+                cer = np.mean(
+                    [
+                        decoder.cer(true, pred)
+                        for true, pred in zip(target_strings, decoded_output)
+                    ]
+                )
+                step = (
+                    epoch_idx * len(train_dataloader) * train_dataloader.batch_size
+                    + batch_idx * train_dataloader.batch_size
+                )
+                #! TIN change
+                wandb.log(
+                    {
+                        "train_loss": loss.item(),
+                        "train_wer": wer,
+                        "train_cer": cer,
+                        "train_samples": wandb.Table(
+                            columns=["gt_text", "pred_text"],
+                            data=list(zip(target_strings, decoded_output)),
+                        ),
+                    },
+                    step=step,
+                )
+            # print(decoded_output)
+        #! #########################
+        # validate:
+        model.eval()
+        val_stats = defaultdict(list)
+        for batch_idx, batch in enumerate(val_dataloader):
+            batch = batch_transforms_val(batch)
+            with torch.no_grad():
+                logits = model(batch["audio"].float())
+                output_length = torch.ceil(
+                    batch["input_lengths"].float() / model.stride
+                ).int()
+                loss = criterion(
+                    logits.permute(2, 0, 1).log_softmax(dim=2),
+                    batch["text"],
+                    output_length,
+                    batch["target_lengths"],
+                )
+
             target_strings = decoder.convert_to_strings(batch["text"].int())
             decoded_output = decoder.decode(logits.permute(0, 2, 1).softmax(dim=2))
             wer = np.mean(
@@ -567,25 +639,63 @@ for epoch_idx in tqdm(range(config.train.get("epochs", 10))):
                     for true, pred in zip(target_strings, decoded_output)
                 ]
             )
-            step = (
-                epoch_idx * len(train_dataloader) * train_dataloader.batch_size
-                + batch_idx * train_dataloader.batch_size
+            val_stats["val_loss"].append(loss.item())
+            val_stats["wer"].append(wer)
+            val_stats["cer"].append(cer)
+        for k, v in val_stats.items():
+            val_stats[k] = np.mean(v)
+        val_stats["val_samples"] = wandb.Table(
+            columns=["gt_text", "pred_text"],
+            data=list(zip(target_strings, decoded_output)),
+        )
+        wandb.log(val_stats, step=step)
+
+        # save model, TODO: save optimizer:
+
+        #! unless defined in the yaml file with save in checkpoints
+        if val_stats["wer"] < prev_wer:
+            os.makedirs(
+                config.train.get("checkpoint_path", "checkpoints"), exist_ok=True
             )
-            #! TIN change
-            wandb.log(
-                {
-                    "train_loss": loss.item(),
-                    "train_wer": wer,
-                    "train_cer": cer,
-                    "train_samples": wandb.Table(
-                        columns=["gt_text", "pred_text"],
-                        data=list(zip(target_strings, decoded_output)),
-                    ),
-                },
-                step=step,
+            prev_wer = val_stats["wer"]
+            torch.save(
+                model.state_dict(),
+                os.path.join(
+                    config.train.get("checkpoint_path", "checkpoints"),
+                    f"{args.model_name}_{epoch_idx}_{prev_wer}.pth",
+                ),
             )
-        # print(decoded_output)
-    #!
+            # try:
+            #     wandb.save(
+            #         os.path.join(
+            #             config.train.get("checkpoint_path", "checkpoints"),
+            #             f"{args.model_name}_{epoch_idx}_{prev_wer}.pth",
+            #         )
+            #     )
+            # except:
+            #     print("could not use wandb save")
+
+        #! no restriction saving
+        os.makedirs(mypath, exist_ok=True)
+        prev_wer = val_stats["wer"]
+        torch.save(
+            model.state_dict(),
+            os.path.join(mypath, f"{args.model_name}_{epoch_idx}_{prev_wer}.pth"),
+        )
+    # try:
+    #     wandb.save(
+    #         os.path.join(mypath, f"{args.model_name}_{epoch_idx}_{prev_wer}.pth")
+    #     )
+    # except:
+    #     print("could not use wandb save")
+    # break
+else:
+    all_gt = []
+    all_predict = []
+    all_gt_predict = {}
+    all_logits = []
+
+    print("##### ONLY DO EVALUATION #####")
     # validate:
     model.eval()
     val_stats = defaultdict(list)
@@ -605,6 +715,12 @@ for epoch_idx in tqdm(range(config.train.get("epochs", 10))):
 
         target_strings = decoder.convert_to_strings(batch["text"].int())
         decoded_output = decoder.decode(logits.permute(0, 2, 1).softmax(dim=2))
+
+        # for checking
+        all_gt.append(target_strings)
+        all_predict.append(decoded_output)
+        all_logits.append(logits.permute(0, 2, 1).softmax(dim=2))
+
         wer = np.mean(
             [
                 decoder.wer(true, pred)
@@ -623,44 +739,29 @@ for epoch_idx in tqdm(range(config.train.get("epochs", 10))):
     for k, v in val_stats.items():
         val_stats[k] = np.mean(v)
     val_stats["val_samples"] = wandb.Table(
-        columns=["gt_text", "pred_text"], data=list(zip(target_strings, decoded_output))
+        columns=["gt_text", "pred_text"],
+        data=list(zip(target_strings, decoded_output)),
     )
-    wandb.log(val_stats, step=step)
 
-    # save model, TODO: save optimizer:
+    torch.save(all_logits, "temp_data/logits.pt")
+    all_gt_predict["gt"] = all_gt
+    all_gt_predict["predict"] = all_predict
 
-    #! unless defined in the yaml file with save in checkpoints
-    if val_stats["wer"] < prev_wer:
-        os.makedirs(config.train.get("checkpoint_path", "checkpoints"), exist_ok=True)
-        prev_wer = val_stats["wer"]
-        torch.save(
-            model.state_dict(),
-            os.path.join(
-                config.train.get("checkpoint_path", "checkpoints"),
-                f"{args.model_name}_{epoch_idx}_{prev_wer}.pth",
-            ),
-        )
-        try:
-            wandb.save(
-                os.path.join(
-                    config.train.get("checkpoint_path", "checkpoints"),
-                    f"{args.model_name}_{epoch_idx}_{prev_wer}.pth",
-                )
-            )
-        except:
-            print("could not use wandb save")
+    letter_correct_count = 0
+    seq_correct_count = 0
+    for gt, predict in zip(all_gt, all_predict):
+        gt = gt[0]
+        predict = predict[0]
+        letter_gt = re.findall(r"spacer_(.*?)_spacer", gt)
+        letter_predict = re.findall(r"spacer_(.*?)_spacer", predict)
+        if letter_gt == letter_predict:
+            letter_correct_count += 1
+        if gt == predict:
+            seq_correct_count += 1
 
-    #! no restriction saving
-    os.makedirs(mypath, exist_ok=True)
-    prev_wer = val_stats["wer"]
-    torch.save(
-        model.state_dict(),
-        os.path.join(mypath, f"{args.model_name}_{epoch_idx}_{prev_wer}.pth"),
-    )
-    try:
-        wandb.save(
-            os.path.join(mypath, f"{args.model_name}_{epoch_idx}_{prev_wer}.pth")
-        )
-    except:
-        print("could not use wandb save")
-    # break
+    print(f"letter acc: {letter_correct_count/len(all_gt)}")
+    print(f"entire seq acc: {letter_correct_count/len(all_gt)}")
+
+    df = pd.DataFrame.from_dict(all_gt_predict)
+    df.to_csv(f"logfile/{best_model_name.split('/')[-1]}_eval.csv", index=False)
+    print(val_stats)
