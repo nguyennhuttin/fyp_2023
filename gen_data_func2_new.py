@@ -269,13 +269,14 @@ def generate_data2(
         # print("Sequence", i + 1, "of", len(currents))
 
         _, barcode_label, letter_label = parse_comment(comments[i], full)
-        ctc_label = intersperse(letter_label, spacer_idx)
 
         #! #####################
         if spacer_idx == 257:
             letter_label = [
                 x + 1 for x in letter_label
             ]  #!!!!!!!!!!!!!!!!!! add 1 so letter start from 1-256
+
+        ctc_label = intersperse(letter_label, spacer_idx)
 
         for j in range(0, num_samples_per_reference):
             # noisy signal generation for each instance

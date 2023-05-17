@@ -84,7 +84,7 @@ parser.add_argument("--numletter", default="7", help="specify number of letter")
 # data_file_name_val = "out_csv/full_spacer_detection.csv"
 parser.add_argument(
     "--train_data",
-    default="out_csv/full_spacer_detection_10k.csv",
+    default="out_csv/full_spacer_detection.csv",
     help="path to train data",
 )
 parser.add_argument(
@@ -234,7 +234,7 @@ data_file_name_train = args.train_data
 data_file_name_val = args.valid_data
 
 
-samples_per_sequence_train = 3
+samples_per_sequence_train = 1
 samples_per_sequence_val = 1
 
 # ! load train
