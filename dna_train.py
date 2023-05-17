@@ -100,6 +100,7 @@ parser.add_argument(
 )
 parser.add_argument("--custom", action="store_true", help="use custom testing case")
 parser.add_argument("--customfile", default="temp_data/segs_val_dataset.pt")
+parser.add_argument("--customfiletrain", default="temp_data/segs_train_dataset.pt")
 args = parser.parse_args()
 # print(args.seg)
 print("\n!!!!args!!!")
@@ -123,7 +124,45 @@ min_samples_st = 2
 
 # model:
 
+
 # utils:
+def remove_bc(signal, spacer_labels2):
+    val = spacer_labels2[0]
+    for i, value in enumerate(spacer_labels2):
+        if value != val:
+            start_index = i
+            break
+
+    val = spacer_labels2[-1]
+    for i, value in enumerate(spacer_labels2[::-1]):
+        if value != val:
+            end_index = i
+            break
+    end_index = len(signal) - end_index
+    # print(start_index,end_index)
+    # print(start_index,end_index)
+    return signal[start_index:end_index], spacer_labels2[start_index:end_index]
+
+
+def split_signal(signal, spacer_label2, segment_size=200, overlap=25):
+    segments = []
+    i = 0
+    # print(len(signal))
+    while i < len(signal):
+        segment = signal[i : i + segment_size]
+        if len(segment) == segment_size:
+            segments.append(segment)
+        i += segment_size - overlap
+        # print(i)
+
+    ctc_segments = []
+    i = 0
+    while i < len(spacer_label2):
+        segment = spacer_label2[i : i + segment_size]
+        if len(segment) == segment_size:
+            ctc_segments.append(list(set(segment)))
+        i += segment_size - overlap
+    return segments, ctc_segments
 
 
 def compress_sig(spacer_labels2, signals):
@@ -193,7 +232,7 @@ data_file_name_train = args.train_data
 data_file_name_val = args.valid_data
 
 
-samples_per_sequence_train = 2
+samples_per_sequence_train = 10
 samples_per_sequence_val = 1
 
 # ! load train
@@ -415,11 +454,37 @@ elif args.mode == "sample":
 elif args.mode == "compress":
     [signal_qs, label_qs, all_states] = compress_sig(spacer_labels2, signals)
     [signal_qs_v, label_qs_v, all_states_v] = compress_sig(spacer_labels2_v, signals_v)
-    train_dataset = Dataset_ctc(signal_qs, ctc_labels)
-    val_dataset = Dataset_ctc(signal_qs_v, ctc_labels_v)
+
     if args.custom:
+        sig_segs_all = []
+        sp_segs_all = []
+        for sig, sp in zip(signals, spacer_labels2):
+            sig, sp = remove_bc(sig, sp)
+            sig_segs, sp_segs = split_signal(sig, sp)
+            sig_segs_all.extend(
+                sig_segs
+            )  # use append to have array of segments belongs to the original signal
+            sp_segs_all.extend(sp_segs)
+
+        sig_segs_all_v = []
+        sp_segs_all_v = []
+        for sig, sp in zip(signals_v, spacer_labels2_v):
+            sig, sp = remove_bc(sig, sp)
+            sig_segs, sp_segs = split_signal(sig, sp)
+            sig_segs_all_v.extend(
+                sig_segs
+            )  # use append to have array of segments belongs to the original signal
+            sp_segs_all_v.extend(sp_segs)
+
+        train_dataset = Dataset_ctc(sig_segs_all, sp_segs_all)
+        val_dataset = Dataset_ctc(sig_segs_all_v, sp_segs_all_v)
+
+        # train_dataset = torch.load(args.customfiletrain)
         val_dataset = torch.load(args.customfile)
         print("#### USING CUSTOM TEST FILE ####")
+    else:
+        train_dataset = Dataset_ctc(signal_qs, ctc_labels)
+        val_dataset = Dataset_ctc(signal_qs_v, ctc_labels_v)
     print("using compress mode")
 
     idx = 0
