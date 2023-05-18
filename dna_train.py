@@ -101,6 +101,8 @@ parser.add_argument(
 parser.add_argument("--custom", action="store_true", help="use custom testing case")
 parser.add_argument("--customfile", default="temp_data/segs_val_dataset.pt")
 parser.add_argument("--customfiletrain", default="temp_data/segs_train_dataset.pt")
+parser.add_argument("--train_samples", default="3")
+parser.add_argument("--val_samples", default="1")
 args = parser.parse_args()
 # print(args.seg)
 print("\n!!!!args!!!")
@@ -144,7 +146,10 @@ def remove_bc(signal, spacer_labels2):
     return signal[start_index:end_index], spacer_labels2[start_index:end_index]
 
 
-def split_signal(signal, spacer_label2, segment_size=200, overlap=25):
+from itertools import groupby
+
+
+def split_signal(signal, spacer_label2, segment_size=150, overlap=25):
     segments = []
     i = 0
     # print(len(signal))
@@ -161,7 +166,7 @@ def split_signal(signal, spacer_label2, segment_size=200, overlap=25):
     while i < len(spacer_label2):
         segment = spacer_label2[i : i + segment_size]
         if len(segment) == segment_size:
-            ctc_segments.append(list(set(segment)))
+            ctc_segments.append([x[0] for x in groupby(segment)])
             spacer_label2_seg.append(segment)
         i += segment_size - overlap
     return segments, ctc_segments, spacer_label2_seg
@@ -189,12 +194,16 @@ def compress_sig(spacer_labels2, signals):
         label_q = []
 
         l = result[0][0]
-        for state in states:
-            if state[0] <= letter_reg[1] and state[1] >= letter_reg[1]:
-                l = result[1][0]
-            label_q.append(l)
-            if state[1] >= letter_reg[2]:
-                l = result[2][0]
+        for i, state in enumerate(states):
+            try:
+                if state[0] <= letter_reg[1] and state[1] >= letter_reg[1]:
+                    l = result[1][0]
+                label_q.append(l)
+                if state[1] >= letter_reg[2]:
+                    l = result[2][0]
+            except:
+                print(i)  # sth wrong here
+                continue
         label_qs.append(label_q)
         signal_qs.append(signal_q)
         all_states.append(states)
@@ -234,8 +243,8 @@ data_file_name_train = args.train_data
 data_file_name_val = args.valid_data
 
 
-samples_per_sequence_train = 3
-samples_per_sequence_val = 1
+samples_per_sequence_train = int(args.train_samples)
+samples_per_sequence_val = int(args.val_samples)
 
 # ! load train
 print(f"loading train data from {data_file_name_train}")
@@ -500,8 +509,8 @@ elif args.mode == "compress":
         train_dataset = Dataset_ctc(sig_segs_all_qs, sp_segs_all)
         val_dataset = Dataset_ctc(sig_segs_all_qs_v, sp_segs_all_v)
 
-        # train_dataset = torch.load(args.customfiletrain)
-        val_dataset = torch.load(args.customfile)
+        # # train_dataset = torch.load(args.customfiletrain)
+        # val_dataset = torch.load(args.customfile)
         print("#### USING CUSTOM TEST FILE ####")
 
     print("using compress mode")
@@ -585,8 +594,16 @@ else:
     best_model_epoch = [
         int(x.split("_")[1]) for x in f if x.split("_")[0] == args.model_name
     ]
+    # print("!!!!")
     # print(best_model_epoch)
+    # print(args.model_name)
+
     best_model_name = mypath + "/" + f[best_model_epoch.index(max(best_model_epoch))]
+    # best_model_name = "checkpoints_free/lslno_41_0.3.pth"
+
+    # print("!!!!")
+    # print(best_model_name)
+    # raise Exception("STOP")
     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     # ! load from checkpoint specified in the yaml
@@ -851,5 +868,7 @@ else:
     print(f"entire seq acc: {letter_correct_count/len(all_gt)}")
 
     df = pd.DataFrame.from_dict(all_gt_predict)
-    df.to_csv(f"logfile/{best_model_name.split('/')[-1]}_eval.csv", index=False)
+    filename = f"logfile/{args.model_name}_eval.csv"
+    print("storing in:", filename)
+    df.to_csv(filename, index=False)
     print(val_stats)

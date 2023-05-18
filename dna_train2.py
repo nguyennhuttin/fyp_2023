@@ -189,12 +189,16 @@ def compress_sig(spacer_labels2, signals):
         label_q = []
 
         l = result[0][0]
-        for state in states:
-            if state[0] <= letter_reg[1] and state[1] >= letter_reg[1]:
-                l = result[1][0]
-            label_q.append(l)
-            if state[1] >= letter_reg[2]:
-                l = result[2][0]
+        for i, state in enumerate(states):
+            try:
+                if state[0] <= letter_reg[1] and state[1] >= letter_reg[1]:
+                    l = result[1][0]
+                label_q.append(l)
+                if state[1] >= letter_reg[2]:
+                    l = result[2][0]
+            except:
+                print(i)
+                continue
         label_qs.append(label_q)
         signal_qs.append(signal_q)
         all_states.append(states)
@@ -461,44 +465,44 @@ elif args.mode == "compress":
     val_dataset = Dataset_ctc(signal_qs_v, ctc_labels_v)
 
     if args.custom:
-        sig_segs_all = []
-        sp_segs_all = []
-        a = []
-        for sig, sp in zip(signals, spacer_labels2):
-            sig, sp = remove_bc(sig, sp)
-            sig_segs, sp_segs, a1 = split_signal(sig, sp)
-            sig_segs_all.extend(
-                sig_segs
-            )  # use append to have array of segments belongs to the original signal
-            sp_segs_all.extend(sp_segs)
-            a.extend(a1)
+        # sig_segs_all = []
+        # sp_segs_all = []
+        # a = []
+        # for sig, sp in zip(signals, spacer_labels2):
+        #     sig, sp = remove_bc(sig, sp)
+        #     sig_segs, sp_segs, a1 = split_signal(sig, sp)
+        #     sig_segs_all.extend(
+        #         sig_segs
+        #     )  # use append to have array of segments belongs to the original signal
+        #     sp_segs_all.extend(sp_segs)
+        #     a.extend(a1)
 
-        sig_segs_all_v = []
-        sp_segs_all_v = []
-        a_v = []
-        for sig, sp in zip(signals_v, spacer_labels2_v):
-            sig, sp = remove_bc(sig, sp)
-            sig_segs, sp_segs, a1_v = split_signal(sig, sp)
-            sig_segs_all_v.extend(
-                sig_segs
-            )  # use append to have array of segments belongs to the original signal
-            sp_segs_all_v.extend(sp_segs)
-            a_v.extend(a1_v)
+        # sig_segs_all_v = []
+        # sp_segs_all_v = []
+        # a_v = []
+        # for sig, sp in zip(signals_v, spacer_labels2_v):
+        #     sig, sp = remove_bc(sig, sp)
+        #     sig_segs, sp_segs, a1_v = split_signal(sig, sp)
+        #     sig_segs_all_v.extend(
+        #         sig_segs
+        #     )  # use append to have array of segments belongs to the original signal
+        #     sp_segs_all_v.extend(sp_segs)
+        #     a_v.extend(a1_v)
 
-        # print(sig_segs_all[0])
+        # # print(sig_segs_all[0])
 
-        [sig_segs_all_qs, sp_segs_all_qs, all_states] = compress_sig(sig_segs_all, a)
-        [sig_segs_all_qs_v, sp_segs_all_qs_v, all_states] = compress_sig(
-            sig_segs_all_v, a_v
-        )
-        # print(a_v)
-        # print(sig_segs_all_qs_v)
-        plt.figure()
-        plt.plot(sig_segs_all_qs_v[0])
-        plt.savefig(f"fig/ctc_{sp_segs_all_v[0]}")
+        # [sig_segs_all_qs, sp_segs_all_qs, all_states] = compress_sig(sig_segs_all, a)
+        # [sig_segs_all_qs_v, sp_segs_all_qs_v, all_states] = compress_sig(
+        #     sig_segs_all_v, a_v
+        # )
+        # # print(a_v)
+        # # print(sig_segs_all_qs_v)
+        # plt.figure()
+        # plt.plot(sig_segs_all_qs_v[0])
+        # plt.savefig(f"fig/ctc_{sp_segs_all_v[0]}")
 
-        train_dataset = Dataset_ctc(sig_segs_all_qs, sp_segs_all)
-        val_dataset = Dataset_ctc(sig_segs_all_qs_v, sp_segs_all_v)
+        # train_dataset = Dataset_ctc(sig_segs_all_qs, sp_segs_all)
+        # val_dataset = Dataset_ctc(sig_segs_all_qs_v, sp_segs_all_v)
 
         # train_dataset = torch.load(args.customfiletrain)
         val_dataset = torch.load(args.customfile)
